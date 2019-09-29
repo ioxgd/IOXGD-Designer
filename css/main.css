@@ -1,0 +1,80 @@
+
+html, body {
+    height: 100%;
+}
+
+body {
+    padding: 0;
+    margin: 0;
+    background: url("../image/interlaced.png");
+    font-family: Arial, Helvetica, sans-serif;
+    color: #585858;
+    user-select: none;
+
+    display: flex;
+    flex-direction: column;
+}
+
+section.menu {
+    background: #FFF;
+    border-top: #ddd 1px solid;
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
+}
+
+section.menu ul {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    padding: 0;
+    margin: 0;
+}
+
+section.menu ul > li {
+    list-style: none;
+    padding: 20px;
+    text-align: center;
+    width: 50px;
+}
+
+section.menu ul > li:hover {
+    background: #f2f2f2;
+}
+
+section.menu ul > li:active {
+    box-shadow: inset 0 3px 5px rgba(0,0,0,.1);
+}
+
+section.menu ul > li > span {
+    display: block;
+}
+
+section.menu ul > li > span.icon {
+    font-size: 32px;
+}
+
+section.menu ul > li > span.label {
+    font-size: 16px;
+    padding-top: 4px;
+}
+
+section.space {
+    flex-grow: 1;
+    position: relative;
+}
+
+#workspace {
+    background: #FFF;
+    margin: 30px;
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    
+    /* DUMMY */
+    width: 800px;
+    height: 480px;
+    margin-left: -400px;
+    margin-top: -240px;
+}
+
+

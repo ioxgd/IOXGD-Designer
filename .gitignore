@@ -1,3 +1,4 @@
 
 *.o
 simulator/output/LittlevGL.exe
+node_modules

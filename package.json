@@ -1,0 +1,23 @@
+{
+  "name": "ioxgd-designer",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "dependencies": {
+    "electron": "^6.0.10"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "start": "electron ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ioxgd/IOXGD-Designer.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ioxgd/IOXGD-Designer/issues"
+  },
+  "homepage": "https://github.com/ioxgd/IOXGD-Designer#readme"
+}
