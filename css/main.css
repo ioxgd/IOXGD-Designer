@@ -1,6 +1,7 @@
 
 html, body {
     height: 100%;
+    box-sizing: border-box;
 }
 
 body {
@@ -19,6 +20,9 @@ section.menu {
     background: #FFF;
     border-top: #ddd 1px solid;
     box-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
 }
 
 section.menu ul {
@@ -33,7 +37,7 @@ section.menu ul > li {
     list-style: none;
     padding: 20px;
     text-align: center;
-    width: 50px;
+    min-width: 50px;
 }
 
 section.menu ul > li:hover {
@@ -57,24 +61,95 @@ section.menu ul > li > span.label {
     padding-top: 4px;
 }
 
+section.menu ul.object {
+    overflow-y: auto;
+}
+
+#get-it-btn {
+    background-color: #6eab42;
+    color: #FFF;
+}
+
+#get-it-btn:hover {
+    background-color: #449d44;
+}
+
+section.content {
+    flex-grow: 1;
+
+    display: flex;
+    flex-direction: row;
+}
+
 section.space {
     flex-grow: 1;
     position: relative;
+    overflow: auto;
+    padding: 20px;
 }
 
 #workspace {
     background: #FFF;
-    margin: 30px;
     box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);
     position: absolute;
     top: 50%;
     left: 50%;
+    transform: translateY(-50%) translateX(-50%);
     
     /* DUMMY */
     width: 800px;
     height: 480px;
-    margin-left: -400px;
-    margin-top: -240px;
 }
 
+section.property {
+    background: #FFF;
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
+    width: 260px;
+    z-index: -1;
+}
 
+section.zoom-panel {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    background: #FFF;
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
+    border-radius: 21px;
+}
+
+section.zoom-panel > button {
+    background: none;
+    border: none;
+    padding: 6px;
+    display: block;
+    outline: none;
+    width: 40px;
+    height: 40px;
+    background-size: 20px;
+    background-repeat: no-repeat;
+    background-position: center;
+    transition: background-size 100ms;
+}
+
+section.zoom-panel > button#zoom-in-btn {
+    background-image: url("../image/plus-solid.svg");
+}
+
+section.zoom-panel > button#zoom-out-btn {
+    background-image: url("../image/minus-solid.svg");
+}
+
+section.zoom-panel > button:hover {
+    background-size: 24px;
+}
+
+#zoom-size {
+    text-align: center;
+    border: none;
+    border-top: #ddd 1px solid;
+    border-bottom: #ddd 1px solid;
+    padding: 4px 0;
+    font-size: 12px;
+    display: block;
+    width: 40px;
+}
