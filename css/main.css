@@ -1,6 +1,9 @@
 
 html, body {
     height: 100%;
+}
+
+* {
     box-sizing: border-box;
 }
 
@@ -14,6 +17,10 @@ body {
 
     display: flex;
     flex-direction: column;
+}
+
+header {
+    z-index: 9999;
 }
 
 section.menu {
@@ -84,28 +91,62 @@ section.content {
 section.space {
     flex-grow: 1;
     position: relative;
-    overflow: auto;
-    padding: 20px;
 }
 
-#workspace {
+section.space > .box-sketch {
+    position: relative;
+    overflow: auto;
+    width: 100%;
+    height: 100%;
+}
+
+#sketch {
     background: #FFF;
     box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translateY(-50%) translateX(-50%);
+    overflow: hidden;
     
     /* DUMMY */
     width: 800px;
     height: 480px;
 }
 
+#sketch > * {
+    position: absolute;
+    padding: 0;
+    margin: 0;
+}
+
+#component-frame1,
+#component-frame2,
+#component-frame3,
+#component-frame4 {
+    background-color: #000;
+    display: none;
+    border: none;
+    z-index: 999999;
+}
+
+/* Top & Bottom */
+#component-frame1,
+#component-frame3 {
+    width: 0;
+    height: 1px;
+}
+
+#component-frame2,
+#component-frame4 {
+    width: 1px;
+    height: 0;
+}
+
 section.property {
     background: #FFF;
     box-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
     width: 260px;
-    z-index: -1;
 }
 
 section.zoom-panel {

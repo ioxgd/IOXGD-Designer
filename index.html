@@ -8,6 +8,7 @@
         <!-- Style -->
         <link rel="stylesheet" href="fontawesome/css/all.css">
         <link rel="stylesheet" href="css/main.css">
+        <link rel="stylesheet" href="css/font-Roboto.css">
 
         <!-- Javascript -->
         <!-- Insert this line above script imports  -->
@@ -16,6 +17,7 @@
         </script>
 
         <script src="js/jquery-3.4.1.min.js"></script>
+        <script src="js/jscolor.js"></script>
         <script src="js/zoom.js"></script>
 
         <!-- Insert this line after script imports -->
@@ -26,8 +28,8 @@
     <body>
         <header>
             <section class="menu">
-                <ul class="object">
-                    <li>
+                <ul class="object" id="object-list">
+                    <!-- <li>
                         <span class="icon"><i class="fas fa-font"></i></span>
                         <span class="label">Label</span>
                     </li>
@@ -46,7 +48,7 @@
                     <li>
                         <span class="icon"><i class="far fa-image"></i></span>
                         <span class="label">Image</span>
-                    </li>
+                    </li> -->
                 </ul>
 
                 <ul>
@@ -64,9 +66,14 @@
 
         <section class="content">
             <section class="space">
-                <svg id="workspace">
-                    <!-- <circle cx="50" cy="50" r="40" stroke="green" stroke-width="4" fill="yellow" /> -->
-                </svg>
+                <div class="box-sketch">
+                    <section id="sketch">
+                        <hr id="component-frame1"><!-- Top -->
+                        <hr id="component-frame2"><!-- Right -->
+                        <hr id="component-frame3"><!-- Bottom -->
+                        <hr id="component-frame4"><!-- Left -->
+                    </section>
+                </div>
 
                 <section class="zoom-panel">
                     <button id="zoom-in-btn"></button>
@@ -76,12 +83,18 @@
             </section>
 
             <section class="property">
-
+                <table class="property-group">
+                    <tbody></tbody>
+                </table>
             </section>
         </section>
 
         <section class="all-model">
 
         </section>
+
+        <script src="js/render.js"></script>
+        <script src="js/component.js"></script>
+        <script src="js/app.js"></script>
     </body>
 </html>

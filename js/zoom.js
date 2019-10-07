@@ -4,7 +4,7 @@ $(function() {
     let updateZoom = () => {
         if (zoom < 0.1) zoom = 0.1;
         if (zoom > 4) zoom = 4;
-        $("#workspace").css("zoom", zoom);
+        $("#sketch").css("zoom", zoom);
         $("#zoom-size").val(`${Math.round(zoom * 100)}%`);
     }
 
@@ -40,5 +40,9 @@ $(function() {
         } else { // wheeled down
             $("#zoom-out-btn").click();
         }
+    });
+
+    $(".space").on('wheel', function(e){
+        e.preventDefault();
     });
 });
