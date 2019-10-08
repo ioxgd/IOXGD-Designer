@@ -1,3 +1,0 @@
-[submodule "simulator/pc_simulator_win_codeblocks"]
-	path = simulator/pc_simulator_win_codeblocks
-	url = https://github.com/ioxgd/pc_simulator_win_codeblocks.git
