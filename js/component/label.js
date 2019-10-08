@@ -206,12 +206,33 @@ addComponent({
       'LV_LABEL_LONG_SROLL',
       'LV_LABEL_LONG_SROLL_CIRC',
       'LV_LABEL_LONG_CROP'
-    ]
+    ];
     let text_align_list = [
       'LV_LABEL_ALIGN_LEFT',
       'LV_LABEL_ALIGN_CENTER',
       'LV_LABEL_ALIGN_RIGHT'
-    ]
+    ];
+
+    let obj_align;
+    if (this.property.alignX === 0 && this.property.alignY === 0) {
+      obj_align = "LV_ALIGN_IN_TOP_LEFT";
+    } else if (this.property.alignX === 1 && this.property.alignY === 0) {
+      obj_align = "LV_ALIGN_IN_TOP_MID";
+    } else if (this.property.alignX === 2 && this.property.alignY === 0) {
+      obj_align = "LV_ALIGN_IN_TOP_RIGHT";
+    } else if (this.property.alignX === 0 && this.property.alignY === 1) {
+      obj_align = "LV_ALIGN_IN_LEFT_MID";
+    } else if (this.property.alignX === 1 && this.property.alignY === 1) {
+      obj_align = "LV_ALIGN_CENTER";
+    } else if (this.property.alignX === 2 && this.property.alignY === 1) {
+      obj_align = "LV_ALIGN_IN_RIGHT_MID";
+    } else if (this.property.alignX === 0 && this.property.alignY === 2) {
+      obj_align = "LV_ALIGN_IN_BOTTOM_LEFT";
+    } else if (this.property.alignX === 1 && this.property.alignY === 2) {
+      obj_align = "LV_ALIGN_IN_BOTTOM_MID";
+    } else if (this.property.alignX === 2 && this.property.alignY === 2) {
+      obj_align = "LV_ALIGN_IN_BOTTOM_RIGHT";
+    }
 
     let code = "";
 
@@ -228,7 +249,7 @@ addComponent({
     code += `lv_label_set_align(${this.property.name}, ${text_align_list[this.property.text_align]});\n`;
     code += `lv_label_set_text(${this.property.name}, "${this.property.text}");\n`;
     code += `lv_obj_set_size(${this.property.name}, ${this.property.width}, ${this.property.height});\n`;
-    code += `lv_obj_align(${this.property.name}, NULL, LV_ALIGN_CENTER, ${this.property.x}, ${this.property.y});\n`;
+    code += `lv_obj_align(${this.property.name}, NULL, ${obj_align}, ${this.property.x}, ${this.property.y});\n`;
 
     return code;
   }

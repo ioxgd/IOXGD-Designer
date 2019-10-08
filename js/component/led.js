@@ -163,6 +163,27 @@ addComponent({
     },
   },
   build: async function() {
+    let obj_align;
+    if (this.property.alignX === 0 && this.property.alignY === 0) {
+      obj_align = "LV_ALIGN_IN_TOP_LEFT";
+    } else if (this.property.alignX === 1 && this.property.alignY === 0) {
+      obj_align = "LV_ALIGN_IN_TOP_MID";
+    } else if (this.property.alignX === 2 && this.property.alignY === 0) {
+      obj_align = "LV_ALIGN_IN_TOP_RIGHT";
+    } else if (this.property.alignX === 0 && this.property.alignY === 1) {
+      obj_align = "LV_ALIGN_IN_LEFT_MID";
+    } else if (this.property.alignX === 1 && this.property.alignY === 1) {
+      obj_align = "LV_ALIGN_CENTER";
+    } else if (this.property.alignX === 2 && this.property.alignY === 1) {
+      obj_align = "LV_ALIGN_IN_RIGHT_MID";
+    } else if (this.property.alignX === 0 && this.property.alignY === 2) {
+      obj_align = "LV_ALIGN_IN_BOTTOM_LEFT";
+    } else if (this.property.alignX === 1 && this.property.alignY === 2) {
+      obj_align = "LV_ALIGN_IN_BOTTOM_MID";
+    } else if (this.property.alignX === 2 && this.property.alignY === 2) {
+      obj_align = "LV_ALIGN_IN_BOTTOM_RIGHT";
+    }
+
     let code = "";
 
     // Style
@@ -182,7 +203,7 @@ addComponent({
     code += `lv_obj_t* ${this.property.name} = lv_led_create(lv_scr_act(), NULL);\n`;
     code += `lv_obj_set_style(${this.property.name}, &${this.property.name}_style);\n`;
     code += `lv_obj_set_size(${this.property.name}, ${this.property.width}, ${this.property.height});\n`;
-    code += `lv_obj_align(${this.property.name}, NULL, LV_ALIGN_CENTER, ${this.property.x}, ${this.property.y});\n`;
+    code += `lv_obj_align(${this.property.name}, NULL, ${obj_align}, ${this.property.x}, ${this.property.y});\n`;
     code += `lv_led_set_bright(${this.property.name}, ${this.property.bright});\n`;
     code += `\n`;
 
