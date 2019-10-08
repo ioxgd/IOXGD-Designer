@@ -1,12 +1,10 @@
-const util = require("util");
 const fs = require("fs");
 const path = require("path");
-const { exec, execSync, execFile } = require("child_process");
-const process = require("process");
+const { exec, execFile } = require("child_process");
 
-let projectDir = "D:\\GitHub\\IOXGD-Designer\\simulator\\pc_simulator_win_codeblocks";
-let compilerDir = "D:\\GitHub\\IOXGD-Designer\\simulator\\MinGW\\bin";
-let outputDir = "D:\\GitHub\\IOXGD-Designer\\simulator\\output";
+let projectDir = `${__dirname}\\pc_simulator_win_codeblocks`;
+let compilerDir = `${__dirname}\\MinGW\\bin`;
+let outputDir = `${__dirname}\\output`;
 let outputFile = "LittlevGL.exe";
 
 let compiler = {
@@ -20,8 +18,8 @@ let flag = {
 }
 
 let includeDir = [
-  "D:\\GitHub\\IOXGD-Designer\\simulator\\pc_simulator_win_codeblocks",
-  "D:\\GitHub\\IOXGD-Designer\\simulator\\pc_simulator_win_codeblocks\\lvgl"
+  `${__dirname}\\pc_simulator_win_codeblocks`,
+  `${__dirname}\\pc_simulator_win_codeblocks\\lvgl`
 ];
 
 let clean = () => {
@@ -42,7 +40,29 @@ let clean = () => {
   deleteFolderRecursive(outputDir);
 }
 
-let compile = (finishCallback) => {
+function execShellCommand(cmd) {
+ return new Promise((resolve, reject) => {
+  exec(cmd, {cwd: compilerDir }, (error, stdout, stderr) => {
+      if (error) {
+        console.warn(error);
+      }
+      resolve(stdout ? stdout : stderr);
+    });
+  });
+}
+
+let compile = async function(log_cb, useOldFile) {
+  if (typeof log_cb !== "function") {
+    log_cb = (msg) => console.log(msg);
+  }
+  if (typeof useOldFile === "undefined") {
+    useOldFile = true;
+  }
+
+  if (!useOldFile) {
+    clean();
+  }
+
   var walkSync = function(dir, filelist) {
     files = fs.readdirSync(dir);
     filelist = filelist || [];
@@ -60,8 +80,8 @@ let compile = (finishCallback) => {
   let listCodeFile = walkSync(projectDir).filter(f => f.endsWith(".cpp") || f.endsWith(".c") || f.endsWith(".s") || f.endsWith(".S"));
 
   outputFiles = [];
-  completeCounter = 0;
-  listCodeFile.forEach((file) => {
+
+  for await (const file of listCodeFile) {
     let outDir = path.dirname(file).replace(projectDir, outputDir);
     let fileName = path.basename(file);
 
@@ -73,52 +93,65 @@ let compile = (finishCallback) => {
     if (file.endsWith(".c")) {
       let outFile = `${outDir}/${fileName}.o`;
 
-      let cmd = `${compilerDir}/${compiler.c} ${flag.c} ${includeDir.map(x => `-I "${x}"`).join(' ')} -c "${file}" -o "${outFile}"`;
-      exec(cmd, {cwd: compilerDir }, function(error, stdout, stderr) {
-        if (error) {
-          console.log(`Compile ${fileName} fail`);
-          console.error(stderr);
-          console.log(stdout);
-          process.exit(0);
-          return;
-        }
-
-        console.log(`Compile ${fileName} OK`);
-        completeCounter++;
-
-        if (completeCounter == listCodeFile.length) {
-          getExe();
-        }
-      });
-      outputFiles.push(outFile);
-    }
-  });
-
-  let getExe = function() {
-    let arg = [];
-    arg = arg.concat(flag.linker.split(' '));
-    arg = arg.concat(outputFiles);
-    arg.push('-o');
-    arg.push(`${outputDir}/${outputFile}`);
-
-    execFile(`${compilerDir}/${compiler.linker}`, arg, {cwd: compilerDir }, function(error, stdout, stderr) {
-      if (error) {
-        console.log("Get Exe error !");
-        console.error(stderr);
-        console.log(stdout);
-      } else {
-        // console.log("Finish !");
-        if (typeof finishCallback === "function") {
-          finishCallback();
+      if (useOldFile) {
+        if (fileName != "codeSimulator.c") {
+          if (fs.existsSync(outFile)) {
+            outputFiles.push(path.resolve(outFile));
+            continue;
+          }
         }
       }
+
+      let cmd = `${compilerDir}/${compiler.c} ${flag.c} ${includeDir.map(x => `-I "${x}"`).join(' ')} -c "${file}" -o "${outFile}"`;
+      try {
+        log_cb(`Compile ${fileName}`);
+        const output = await execShellCommand(cmd);
+        if (output) {
+          console.log(output);
+        }
+      } catch (err) {
+        console.error(err);
+        break;
+      }
+      outputFiles.push(path.resolve(outFile));
+    }
+  }
+
+  let arg = [];
+  arg = arg.concat(flag.linker.split(' '));
+  arg = arg.concat(outputFiles);
+  arg.push('-o');
+  arg.push(`${outputDir}/${outputFile}`);
+
+  log_cb(`Create ${outputFile}`);
+  const output = await new Promise((resolve, reject) => {
+    execFile(`${compilerDir}/${compiler.linker}`, arg, {cwd: compilerDir }, (error, stdout, stderr) => {
+      if (error) {
+        console.warn(error);
+      }
+      resolve(stdout ? stdout : stderr);
     });
+  });
+  if (output) {
+    console.log(output);
+    log_cb("Error !!!");
   }
 }
 
-console.log("Clean");
-clean();
+let run = function() {
+  return exec(`${outputDir}/${outputFile}`);
+}
 
-console.log("Compile...");
-compile(() => console.log("Finish !"));
+let writeCode = async function(code) {
+  code = `#include "lvgl/lvgl.h"\nvoid codeSimulator() {\n${code}\n}\n`;
 
+  fs.writeFileSync(`${projectDir}/codeSimulator.c`, code);
+}
+
+module.exports = {
+  writeCode,
+  clean,
+  compile,
+  run,
+  outputFile
+}

@@ -23,6 +23,13 @@ header {
     z-index: 9999;
 }
 
+body > section {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    height: 100%;
+}
+
 section.menu {
     background: #FFF;
     border-top: #ddd 1px solid;
@@ -86,6 +93,14 @@ section.content {
 
     display: flex;
     flex-direction: row;
+}
+
+section.bottom-bar {
+    background: #FFF;
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
+    padding: 4px;
+    font-size: 14px;
+    z-index: -1;
 }
 
 section.space {

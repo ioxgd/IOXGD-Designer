@@ -12,6 +12,7 @@
 // const rimraf = require('rimraf');
 
 // const path = require("path");
+
 /* 
 var grid_size = 20;
 var project = {

@@ -301,18 +301,6 @@ function updatePropertyTable() {
   });
 }
 
-function getTextHandle(text) {
-  if (typeof textHandle === "undefined") {
-    textHandle = 0;
-  } else {
-    textHandle++;
-  }
-
-  strContentAllLine += text;
-  strContentAllLine += '\n';
-  
-  return textHandle;
-}
 
 async function getImageHandle(filePath, width, height) {
   filePath = path.resolve(filePath);
@@ -388,38 +376,8 @@ async function getImageHandle(filePath, width, height) {
   return imageHandle;
 }
 
-async function buildComponentsGetFile() {
-  if (!fs.existsSync(project.path)) {
-    alert("Plz save project before build !");
-    return false;
-  }
-  
-  projectPath = path.resolve(project.path + "/" + project.name);
-  buildPath = path.resolve(projectPath + "/build");
-  if (fs.existsSync(buildPath)) {
-    try {
-      rimraf.sync(buildPath);
-    } catch(err) {
-      throw "Can't delete build directory, Plz close File Explorer"
-    }
-  }
-  try {
-    fs.mkdirSync(buildPath);
-  } catch(err) {
-    throw "Can't create build directory, Plz close File Explorer"
-  }
-  
-  pagePath = path.resolve(buildPath + "/" + project.activePageName);
-  try {
-    fs.mkdirSync(pagePath);
-  } catch(err) {
-    throw "Can't create " + project.activePageName + " directory, Plz close File Explorer"
-  }
-  
-  strContentAllLine = "";
-  arrConvertImage = [];
-  
-  let compContent = "";
+async function buildComponentsGetCode() {
+  var code = "";
   
   for (const id of Object.keys(componentList)) {
     let name = componentList[id].name;
@@ -435,22 +393,10 @@ async function buildComponentsGetFile() {
     if (typeof comp === "undefined") {
       return;
     }
-    
-    compContent += await comp.build.bind(componentList[id])();
-    compContent += "\n";
+
+    code += await comp.build.bind(componentList[id])();
+    code += "\n";
   }
   
-  try {
-    fs.writeFileSync(pagePath + "/comp.csv", compContent); // Write comp.csv
-    fs.writeFileSync(pagePath + "/img.js", JSON.stringify(arrConvertImage)); // Write img.js
-    fs.writeFileSync(pagePath + "/str.txt", strContentAllLine); // Write str.txt
-  } catch(err) {
-    throw "Can't write build file, Your disk is full ?"
-  }
-  
-  // Clean
-  if (typeof imageHandle !== "undefined") delete imageHandle;
-  if (typeof textHandle !== "undefined") delete textHandle;
-  
-  return pagePath;
+  return code;
 }
