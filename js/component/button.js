@@ -71,12 +71,14 @@ addComponent({
     x: {
       label: "X offset",
       type: "number",
-      default: 0
+      default: 0,
+      inputOffset: 'x'
     },
     y: {
       label: "Y offset",
       type: "number",
-      default: 0
+      default: 0,
+      inputOffset: 'y'
     },
     width: {
       label: "Width",
