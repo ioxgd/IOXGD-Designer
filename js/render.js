@@ -179,7 +179,7 @@ function updatePropertyTable() {
       if (property.type === "text") {
         html += "<input type=\"text\" class=\"property\" data-property=\"" + propertyName + "\" value=\"" + componentList[id].property[propertyName] + "\">";
       } else if (property.type === "number") {
-        html += "<input type=\"number\" class=\"property\" data-property=\"" + propertyName + "\" value=\"" + componentList[id].property[propertyName] + "\">";
+        html += `<input type="number" class="property${(typeof property.inputOffset !== "undefined" ? ` input-${property.inputOffset}-offset` : '')}" data-property="${propertyName}" value="${componentList[id].property[propertyName]}">`;
       } else if (property.type === "color") {
         html += "<input type=\"text\" class=\"input-color property\" data-property=\"" + propertyName + "\" value=\"" + componentList[id].property[propertyName] + "\">";
       } else if (property.type === "choice") {
@@ -295,9 +295,11 @@ function updatePropertyTable() {
     updateComponentFrame();
   });
   
-  $(".file-select").click(function(e) {
-    let fPath = dialog.showOpenDialog({ properties: ['openFile'], filters: [{ name: "Image", extensions: ["png", "jpg", "jpeg"] }] });
-    $(this).attr("value", fPath).trigger("change");
+  $(".file-select").click(async function(e) {
+    let result = await dialog.showOpenDialog({ properties: ['openFile'], filters: [{ name: "Image", extensions: ["png", "jpg", "jpeg"] }] });
+    if (!result.canceled) {
+      $(this).attr("value", result.filePaths).trigger("change");
+    }
   });
 }
 
@@ -394,7 +396,9 @@ async function buildComponentsGetCode() {
       return;
     }
 
+    code += `/* ========== ${componentList[id].property.name} ========== */\n`;
     code += await comp.build.bind(componentList[id])();
+    code += `/* ====== END of ${componentList[id].property.name} ====== */\n`;
     code += "\n";
   }
   
