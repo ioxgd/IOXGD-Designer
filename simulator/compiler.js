@@ -1,6 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 const { exec, execFile } = require("child_process");
+const md5File = require('md5-file/promise')
 
 let projectDir = `${__dirname}\\pc_simulator_win_codeblocks`;
 let compilerDir = `${__dirname}\\MinGW\\bin`;
@@ -21,6 +22,8 @@ let includeDir = [
   `${__dirname}\\pc_simulator_win_codeblocks`,
   `${__dirname}\\pc_simulator_win_codeblocks\\lvgl`
 ];
+
+let fileChackMD5 = { };
 
 let clean = () => {
   let deleteFolderRecursive = (path) => {
@@ -94,10 +97,17 @@ let compile = async function(log_cb, useOldFile) {
       let outFile = `${outDir}/${fileName}.o`;
 
       if (useOldFile) {
-        if (fileName != "codeSimulator.c") {
-          if (fs.existsSync(outFile)) {
-            outputFiles.push(path.resolve(outFile));
-            continue;
+        if (fs.existsSync(outFile)) {
+          let md5 = await md5File(file);
+          if (typeof fileChackMD5[file] !== "undefined") {
+            if (fileChackMD5[file] === md5) {
+              outputFiles.push(path.resolve(outFile));
+              continue;
+            } else {
+              fileChackMD5[file] = md5;
+            }
+          } else {
+            fileChackMD5[file] = md5;
           }
         }
       }
