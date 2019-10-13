@@ -1,6 +1,6 @@
-// const remote = require('electron').remote;
+const remote = require('electron').remote;
 // const { shell } = require('electron');
-// const dialog = remote.dialog;
+const dialog = remote.dialog;
 // const app = remote.app;
 
 // console.log(app);
@@ -562,8 +562,8 @@ $(function() {
   // });
   
   // // Hot key
-  document.onkeyup = function(e) {
-    if (e.which == 46) {
+  document.onkeydown = function(e) {
+    if (e.which === 46) { // Delete
       let focus = $(".focus");
       let id = focus.attr("data-id");
       focus.remove();
@@ -573,6 +573,14 @@ $(function() {
       updateComponentFrame();
       
       $(".property-group > tbody").html("");
+    } else if (e.which === 38) { // Up
+      $(".input-y-offset").val(parseInt($(".input-y-offset").val()) - 10).change();
+    } else if (e.which === 40) { // Down
+      $(".input-y-offset").val(parseInt($(".input-y-offset").val()) + 10).change();
+    } else if (e.which === 37) { // Left
+      $(".input-x-offset").val(parseInt($(".input-x-offset").val()) - 10).change();
+    } else if (e.which === 39) { // Right
+      $(".input-x-offset").val(parseInt($(".input-x-offset").val()) + 10).change();
     }
   };
   
