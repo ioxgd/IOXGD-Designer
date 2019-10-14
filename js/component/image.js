@@ -138,8 +138,7 @@ addComponent({
     code += `lv_obj_t* ${this.property.name} = lv_img_create(lv_scr_act(), NULL);\n`;
     code += `// lv_img_set_src(${this.property.name}, "${this.property.src}"); // TODO\n`;
     code += `lv_obj_align(${this.property.name}, NULL, ${obj_align}, ${this.property.x}, ${this.property.y});\n`;
-    code += `\n`;
-
+    
     return code;
   }
 });

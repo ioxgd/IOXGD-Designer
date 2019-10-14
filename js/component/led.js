@@ -207,7 +207,6 @@ addComponent({
     code += `lv_obj_set_size(${this.property.name}, ${this.property.width}, ${this.property.height});\n`;
     code += `lv_obj_align(${this.property.name}, NULL, ${obj_align}, ${this.property.x}, ${this.property.y});\n`;
     code += `lv_led_set_bright(${this.property.name}, ${this.property.bright});\n`;
-    code += `\n`;
 
     return code;
   }
