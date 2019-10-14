@@ -7,6 +7,10 @@ var svgSketch = document.getElementById("sketch");
 var componentCount = 0;
 var abstractComponentList = [];
 var componentList = {};
+var pageBackground = {
+  main_color: "#FFFFFF",
+  grad_color: "#FFFFFF"
+};
 
 function addComponent(comp) {
   abstractComponentList.push(comp);
@@ -380,6 +384,12 @@ async function getImageHandle(filePath, width, height) {
 
 async function buildComponentsGetCode() {
   var code = "";
+  code += "static lv_style_t style_screen;\n";
+  code += "lv_style_copy(&style_screen, &lv_style_plain);\n";
+  code += `style_screen.body.main_color = lv_color_hex(0x${pageBackground.main_color.substring(1)});\n`;
+  code += `style_screen.body.grad_color = lv_color_hex(0x${pageBackground.grad_color.substring(1)});\n`;
+  code += "lv_obj_set_style(lv_scr_act(), &style_screen);\n"
+  code += "\n";
   
   for (const id of Object.keys(componentList)) {
     let name = componentList[id].name;
