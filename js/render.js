@@ -172,9 +172,9 @@ function updatePropertyTable() {
     
     let property = comp.property[propertyName];
     if (typeof property === "object") {
-      html += "<tr>";
-      html += "<td>" + (typeof property.label !== "undefined" ? property.label : propertyName) + "</td>";
-      html += "<td>";
+      html += "<li>";
+      html += `<div class="label">${(typeof property.label !== "undefined" ? property.label : propertyName)}</div>`;
+      html += `<div class="value">`;
       
       if (property.type === "text") {
         html += "<input type=\"text\" class=\"property\" data-property=\"" + propertyName + "\" value=\"" + componentList[id].property[propertyName] + "\">";
@@ -192,15 +192,15 @@ function updatePropertyTable() {
         html += "<button class=\"property file-select\" data-property=\"" + propertyName + "\" value=\"" + componentList[id].property[propertyName] + "\">Choose</button>";
       }
       
-      html += "</td>";
-      html += "</tr>";
+      html += "</div>";
+      html += "</li>";
     } else {
       /* html += componentList[id].property[propertyName]; */
     }
     
   });
 
-  $(".property-group > tbody").html(html);
+  $("#property-box").html(html);
   
   $(".input-color").each(function() {
     // console.log(this);

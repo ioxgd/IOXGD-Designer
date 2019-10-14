@@ -93,6 +93,7 @@ section.content {
 
     display: flex;
     flex-direction: row;
+    overflow: auto;
 }
 
 section.bottom-bar {
@@ -208,4 +209,26 @@ section.zoom-panel > button:hover {
     font-size: 12px;
     display: block;
     width: 40px;
+}
+
+#property-box {
+    margin: 0;
+    padding: 10px;
+    overflow: auto;
+    height: 100%;
+}
+
+#property-box > li {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    margin-bottom: 10px;
+}
+
+#property-box > li > .label {
+    margin-bottom: 6px;
+}
+
+#property-box > li > .value > * {
+    width: 100%;
 }

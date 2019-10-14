@@ -164,7 +164,7 @@ $(function() {
       // Hide frame
       updateComponentFrame();
       
-      $(".property-group > tbody").html("");
+      $("#property-box").html("");
     } else if (e.which === 38) { // Up
       $(".input-y-offset").val(parseInt($(".input-y-offset").val()) - 10).change();
     } else if (e.which === 40) { // Down
@@ -201,7 +201,7 @@ $(function() {
     
     updateComponentFrame();
     
-    $(".property-group > tbody").html("");
+    $("#property-box").html("");
   });
 
 

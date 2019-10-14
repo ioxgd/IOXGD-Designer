@@ -8,8 +8,12 @@ app.on('ready', () => {
       height: 600,
       webPreferences: {
         nodeIntegration: true
-      }
-    })
+      },
+      show: false
+    });
+
+    win.maximize();
+    win.show();
   
     // and load the index.html of the app.
     win.loadFile('index.html')

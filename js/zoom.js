@@ -1,5 +1,7 @@
 
 let zoom = 1;
+let space_enter = false;
+
 $(function() {
     let updateZoom = () => {
         if (zoom < 0.1) zoom = 0.1;
@@ -34,7 +36,17 @@ $(function() {
         }
     });
 
+    $("section.space").hover(() => {
+        space_enter = true;
+    }, () => {
+        space_enter = false;
+    })
+
     $(window).on('wheel', function(event){
+        if (!space_enter) {
+            return;
+        }
+
         if(event.originalEvent.deltaY < 0){ // wheeled up
             $("#zoom-in-btn").click();
         } else { // wheeled down
