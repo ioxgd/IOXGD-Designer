@@ -1,6 +1,6 @@
 addComponent({
   name: "Button",
-  icon: '',
+  icon: '<i class="fas fa-stop"></i>',
   property: {
     name: {
       label: "Name",
