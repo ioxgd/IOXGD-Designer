@@ -108,8 +108,8 @@ addComponent({
     text: {
       label: "Text",
       type: "text",
-      // pattern: /^[\0-\xff]{1,50}$/,
-      default: "Button"
+      default: "Button",
+      validate: 'font'
     },
     rel_main_color: {
       label: "Release Main color",
@@ -153,14 +153,7 @@ addComponent({
     },
     font: {
       label: "Font",
-      type: "choice",
-      choice: [
-        {
-          label: "Roboto (16)",
-          value: "roboto:16"
-        },
-      ],
-      default: "roboto:16"
+      type: "font"
     }
   },
   render: {
@@ -196,7 +189,9 @@ addComponent({
       return [];
     },
     update: function(element) {
-      $(element).find("p").text(this.property.text);
+      let font = getFontFromName(this.property.font);
+
+      $(element).find("p").text(textFilter(this.property.text, font.range));
 
       $(element).css({
         width: this.property.width,
@@ -205,8 +200,8 @@ addComponent({
         background: `linear-gradient(180deg, ${this.property.rel_main_color} 0%, ${this.property.rel_grad_color} 100%)`,
         border: `${this.property.border_width}px solid ${this.property.border_color}`,
         "border-radius": `${this.property.radius}px`,
-        "font-family": this.property.font.split(':')[0],
-        "font-size": `${this.property.font.split(':')[1]}px`
+        "font-family": font.name,
+        "font-size": `${font.size}px`
       });
 
       updatePos.bind(this)(element);
@@ -233,6 +228,8 @@ addComponent({
     } else if (this.property.alignX === 2 && this.property.alignY === 2) {
       obj_align = "LV_ALIGN_IN_BOTTOM_RIGHT";
     }
+
+    let font = getFontFromName(this.property.font);
 
     let code = "";
 
@@ -269,6 +266,7 @@ addComponent({
     code += `static lv_style_t ${this.property.name}_label_style;\n`;
     code += `lv_style_copy(&${this.property.name}_label_style, &lv_style_plain);\n`;
     code += `${this.property.name}_label_style.text.color = lv_color_hex(0x${this.property.color.substring(1)});\n`;
+    code += `${this.property.name}_label_style.text.font = &${typeof font.variable !== "undefined" ? font.variable : font.name};\n`;
     code += `lv_obj_t* ${this.property.name}_label = lv_label_create(${this.property.name}, NULL);\n`;
     code += `lv_label_set_style(${this.property.name}_label, LV_LABEL_STYLE_MAIN, &${this.property.name}_label_style);\n`;
     code += `lv_label_set_text(${this.property.name}_label, "${this.property.text}");\n`;

@@ -93,7 +93,6 @@ addComponent({
     text: {
       label: "Text",
       type: "text",
-      // pattern: /^[\0-\xff]{1,50}$/,
       default: "Hello",
       validate: 'font'
     },
