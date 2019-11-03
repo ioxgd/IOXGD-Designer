@@ -23,8 +23,14 @@ $(function() {
         codeGen = codeGen.replace(/\n/g, "\n  ");
         codeGen = codeGen.trim();
 
+        let fontCode = await buildFontSaveFileGetCode(path.dirname(filePath), (msg) => {
+            $("#status").text(msg);
+        });
+
         let codePage = "";
         codePage += "/* ======== Generate by IOXGD Designer ======== */\n";
+        codePage += "\n";
+        codePage += fontCode;
         codePage += "\n";
         codePage += "void load_page() {\n";
         codePage += `  ${codeGen}\n`;

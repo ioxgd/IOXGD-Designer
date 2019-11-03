@@ -1,5 +1,3 @@
-// JavaScript Document
-
 const svgNS = "http://www.w3.org/2000/svg";
 const htmlNS = "http://www.w3.org/1999/xhtml";
 var svgSketch = document.getElementById("sketch");
@@ -41,10 +39,14 @@ function createComponent(name) {
     let propertyValue;
     let property = comp.property[propertyName];
     if (typeof property === "object") {
-      if (typeof property.default !== "function") {
-        propertyValue = property.default;
-      } else {
+      if (typeof property.default === "undefined") {
+        if (property.type === "font") {
+          propertyValue = listFont[0].name;
+        }
+      } else if (typeof property.default === "function") {
         propertyValue = property.default();
+      } else {
+        propertyValue = property.default;
       }
     } else {
       propertyValue = property;
@@ -194,6 +196,14 @@ function updatePropertyTable() {
         html += "</select>";
       } else if (property.type === "file") {
         html += "<button class=\"property file-select\" data-property=\"" + propertyName + "\" value=\"" + componentList[id].property[propertyName] + "\">Choose</button>";
+      } else if (property.type === "font") {
+        html += "<select class=\"property\" data-property=\"" + propertyName + "\">";
+        for (let item of listFont) {
+          html += "<option value=\"" + item.name + "\"" + (item.name === componentList[id].property[propertyName] ? " selected" : "") + ">" + item.name + "</option>";
+        }
+        html += "</select>";
+
+        
       }
       
       html += "</div>";
@@ -278,6 +288,11 @@ function updatePropertyTable() {
           return;
         }
       }
+/*       if (typeof property.validate !== "undefined") {
+        if (property.validate === "font") {
+          propertyValue = textFilter(propertyValue, getFontFromName(componentList[id].property.font).range);
+        }
+      } */
       componentList[id].property[propertyName] = propertyValue;
     } else if (property.type === "color") {
       if (/^#[0-9a-fA-F]{6}$/.test(propertyValue) === false) {
@@ -287,6 +302,8 @@ function updatePropertyTable() {
       }
       componentList[id].property[propertyName] = propertyValue;
     } else if (property.type === "file") {
+      componentList[id].property[propertyName] = propertyValue;
+    } else if (property.type === "font") {
       componentList[id].property[propertyName] = propertyValue;
     }
     
@@ -305,81 +322,6 @@ function updatePropertyTable() {
       $(this).attr("value", result.filePaths).trigger("change");
     }
   });
-}
-
-
-async function getImageHandle(filePath, width, height) {
-  filePath = path.resolve(filePath);
-    
-  if (typeof imageHandle === "undefined") {
-    imageHandle = 0;
-  } else {
-    imageHandle++;
-  }
-
-  let convertFile = path.resolve(app.getAppPath() + "/bin/img_cvt.exe");
-  if (!fs.existsSync(convertFile)) {
-    alert("File not found with converting image to bin");
-    return -1;
-  }
-  
-  let found = filePath.match(/([^\/\\]+)\.(png|jpe?g)$/i);
-  if (found === null) {
-    return -1;
-  }
-  
-  let fileFullName = found[0];
-  let fileName = found[1];
-  let fileExten = found[2].toLowerCase().replace("jpeg", "jpg");
-  
-  // Copy file to tmp directory
-  let tmpPath = projectPath + "/tmp";
-  if (fs.existsSync(tmpPath)) {
-    rimraf.sync(tmpPath);
-  }
-  fs.mkdirSync(tmpPath);
-  
-  let newFilePath = tmpPath + "/" + imageHandle + "." + fileExten; // Rename file to xx.(jpg|png)
-  fs.copyFileSync(filePath, newFilePath);
-  filePath = path.resolve(newFilePath);
-  
-  extension2format = {
-    png: {
-      format: 6,
-      label: "ARGB4"
-    },
-    jpg: {
-      format: 7,
-      label: "RGB565"
-    },
-  };
-  
-  let format = extension2format[fileExten].format;
-  
-  let cmd = "\"" + convertFile + "\"";
-  cmd += " -i \"" + filePath + "\"";
-  cmd += " -f " + format;
-
-  await exec(cmd, { cwd: tmpPath }); // Run cmd
-  
-  let binPath = tmpPath + "/" + imageHandle + "_" + extension2format[fileExten].label + "/" + imageHandle + ".bin";
-  if (!fs.existsSync(binPath)) {
-    alert("Error, can't convert " + fileFullName + " to bin");
-    return -1;
-  }
-  
-  fs.copyFileSync(binPath, pagePath + "/" + imageHandle + ".bin");
-  
-  rimraf.sync(tmpPath);
-  
-  arrConvertImage.push({
-    han: imageHandle,
-    wid: width,
-    hei: height,
-    typ: format
-  });
-  
-  return imageHandle;
 }
 
 async function buildComponentsGetCode() {
@@ -414,3 +356,35 @@ async function buildComponentsGetCode() {
   
   return code;
 }
+
+function execShellCommand(cmd) {
+  return new Promise((resolve, reject) => {
+    exec(cmd, (error, stdout, stderr) => {
+        if (error) {
+          console.warn(error);
+        }
+        resolve(stdout ? stdout : stderr);
+      });
+    });
+}
+
+async function buildFontSaveFileGetCode(path, callback) {
+  let code = "";
+
+  for (let font of listFont) {
+    if (typeof font.variable !== "undefined") {
+      continue;
+    }
+    if (typeof callback === "function") callback(`Convarting ${font.name} to C Array`);
+    try {
+      let cmd = `bin\\lv_font_conv_v0.3.1_x64.exe --font "${font.file}" --bpp 4 --size ${font.size} -r ${font.range} --format lvgl --no-compress -o "${path}\\${font.name}.c"`;
+      await execShellCommand(cmd);
+      code += `LV_FONT_DECLARE(${font.name});\n`;
+    } catch(e) {
+      dialog.showErrorBox('Oops! Something went wrong!', `${font.name} can't convert to C array`);
+    }
+  }
+
+  return code;
+}
+

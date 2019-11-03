@@ -152,13 +152,16 @@ let run = function() {
   return exec(`${outputDir}/${outputFile}`);
 }
 
-let writeCode = async function(code) {
-  code = `#include "lvgl/lvgl.h"\nvoid codeSimulator() {\n${code}\n}\n`;
+let writeCode = async function(code, font) {
+  if (typeof font !== "string") font = "";
 
-  fs.writeFileSync(`${projectDir}/codeSimulator.c`, code);
+  code = `#include "lvgl/lvgl.h"\n${font}\nvoid codeSimulator() {\n${code}\n}\n`;
+
+  fs.writeFileSync(`${projectDir}/codegen/codeSimulator.c`, code);
 }
 
 module.exports = {
+  fontdir: `${projectDir}/codegen`,
   writeCode,
   clean,
   compile,

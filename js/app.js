@@ -1,7 +1,4 @@
-const remote = require('electron').remote;
-const dialog = remote.dialog;
-const fs = require("fs");
-  
+ 
 function updateComponentFrame() {
   let n = $(".focus").length;
   if (n >= 1) {

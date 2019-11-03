@@ -94,7 +94,8 @@ addComponent({
       label: "Text",
       type: "text",
       // pattern: /^[\0-\xff]{1,50}$/,
-      default: "Hello"
+      default: "Hello",
+      validate: 'font'
     },
     text_align: {
       label: "Text Align",
@@ -153,13 +154,7 @@ addComponent({
     },
     font: {
       label: "Font",
-      type: "choice",
-      choice: [
-        {
-          label: "default",
-          value: 0
-        },
-      ]
+      type: "font"
     }
   },
   render: {
@@ -188,13 +183,17 @@ addComponent({
     update: function(element) {
       let alignList = ["left", "center", "right"];
 
-      $(element).find("p").text(this.property.text);
+      let font = getFontFromName(this.property.font);
+
+      $(element).find("p").text(textFilter(this.property.text, font.range));
 
       $(element).css({
         width: this.property.width == 0 ? "auto" : this.property.width,
         height: this.property.height == 0 ? "auto" : this.property.height,
         "text-align": alignList[this.property.text_align],
-        color: this.property.color
+        color: this.property.color,
+        "font-family": font.name,
+        "font-size": `${font.size}px`
       });
 
       updatePos.bind(this)(element);
@@ -236,17 +235,20 @@ addComponent({
       obj_align = "LV_ALIGN_IN_BOTTOM_RIGHT";
     }
 
+    let font = getFontFromName(this.property.font);
+
     let code = "";
 
     // Style
     code += `static lv_style_t ${this.property.name}_style;\n`;
     code += `lv_style_copy(&${this.property.name}_style, &lv_style_plain);\n`;
     code += `${this.property.name}_style.text.color = lv_color_hex(0x${this.property.color.substring(1)});\n`;
+    code += `${this.property.name}_style.text.font = &${typeof font.variable !== "undefined" ? font.variable : font.name};\n`;
     code += `\n`;
 
     // Label object
     code += `lv_obj_t* ${this.property.name} = lv_label_create(lv_scr_act(), NULL);\n`;
-    code += `lv_label_set_style(${this.property.name}, LV_LABEL_STYLE_MAIN, &${this.property.name}_style);`;
+    code += `lv_label_set_style(${this.property.name}, LV_LABEL_STYLE_MAIN, &${this.property.name}_style);\n`;
     code += `lv_label_set_long_mode(${this.property.name}, ${long_mode_list[this.property.mode]});\n`;
     code += `lv_label_set_align(${this.property.name}, ${text_align_list[this.property.text_align]});\n`;
     code += `lv_label_set_text(${this.property.name}, "${this.property.text}");\n`;

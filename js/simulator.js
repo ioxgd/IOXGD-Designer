@@ -1,23 +1,43 @@
-const simulator = require("./simulator/compiler.js");
-const { execFileSync } = require("child_process");
+let simulator_run = () => {
+    simulator.run();
+    $("#status").text("Run simulator");
+}
+
+let simulator_bulid = async () => {
+    let fontCode = await buildFontSaveFileGetCode(simulator.fontdir, (msg) => {
+        $("#status").text(msg);
+    });
+    let code = await buildComponentsGetCode();
+
+    await simulator.writeCode(code, fontCode);
+
+    await simulator.compile((msg) => {
+        $("#status").text(msg);
+    });
+
+    $("#status").text("Bulid simulator");
+}
+
+let simulator_clean = async () => {
+    await simulator.clean();
+    $("#status").text("Clean simulator");
+}
+
+let simulator_stop = () => {
+    try {
+        execFileSync("taskkill", ["/IM", simulator.outputFile, "/F"]);
+    } catch(err) {
+
+    }
+    $("#status").text("Stop simulator");
+};
+
+let simulator_bulid_and_run = async () => {
+    simulator_stop();
+    await simulator_bulid();
+    simulator_run();
+}
 
 $(function() {
-    $("#simulator-btn").click(async function(e) {
-        let code = await buildComponentsGetCode();
-        await simulator.writeCode(code);
-        // simulator.clean();
-
-        // Close
-        try {
-            execFileSync("taskkill", ["/IM", simulator.outputFile, "/F"]);
-        } catch(err) {
-
-        }
-        
-        await simulator.compile((msg) => {
-            $("#status").text(msg);
-        });
-        simulator.run();
-        $("#status").text("Run simulator");
-    });
+    $("#simulator-btn").click(simulator_bulid_and_run);
 });
