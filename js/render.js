@@ -4,7 +4,16 @@ var svgSketch = document.getElementById("sketch");
 
 var componentCount = 0;
 var abstractComponentList = [];
-var componentList = {};
+
+var pageFocus = 0;
+var pageAndComponent = [
+  {
+    name: 'index',
+    component: {
+
+    }
+  } 
+];
 var pageBackground = {
   main_color: "#FFFFFF",
   grad_color: "#FFFFFF"
@@ -31,9 +40,9 @@ function createComponent(name) {
   componentCount++;
   
   // console.log(comp);
-  componentList[id] = {};
-  componentList[id].name = comp.name;
-  componentList[id].property = {};
+  pageAndComponent[pageFocus].component[id] = {};
+  pageAndComponent[pageFocus].component[id].name = comp.name;
+  pageAndComponent[pageFocus].component[id].property = {};
   Object.keys(comp.property).forEach(function(propertyName) {
     // console.log(propertyName);
     let propertyValue;
@@ -51,33 +60,48 @@ function createComponent(name) {
     } else {
       propertyValue = property;
     }
-    componentList[id].property[propertyName] = propertyValue;
+    pageAndComponent[pageFocus].component[id].property[propertyName] = propertyValue;
   });
   
-  // console.log(componentList[id]);
+  // console.log(pageAndComponent[pageFocus].component[id]);
   
   element = comp.render.create();
   element.setAttribute("data-id", id);
   element.setAttribute("class", "component");
-  comp.render.update.bind(componentList[id])(element);
+  comp.render.update.bind(pageAndComponent[pageFocus].component[id])(element);
   
   svgSketch.appendChild(element);
   
   reconfigDraggable();
 }
 
-function componentToJson() {
-  return JSON.stringify(componentList);
+function allPageToJson() {
+  return JSON.stringify(pageAndComponent, null, '\t');
 }
 
-function loadComponentFromJson(json) {
+function allPageFromJson(json) {
+  pageAndComponent = JSON.parse(json);
+
+  rerenderComponent();
+}
+
+function waitFor(selector) {
+  return new Promise(function (res, rej) {
+    console.log("Wait");
+    setTimeout(() => {
+      console.log("Load end");
+      res();
+    }, 10);
+  });
+}
+
+async function rerenderComponent() {
   // $(svgSketch).find(".component").remove();
   removeAllComponent();
-  componentList = JSON.parse(json);
-  
+
   let arrNumber = [];
-  Object.keys(componentList).forEach(function(id) {
-    let name = componentList[id].name;
+  for (let id in pageAndComponent[pageFocus].component) {
+    let name = pageAndComponent[pageFocus].component[id].name;
 	// console.log(id, id.match(/[0-9]+/));
     arrNumber.push(+(id.match(/[0-9]+/)[0]));
 	
@@ -96,10 +120,17 @@ function loadComponentFromJson(json) {
     element = comp.render.create();
     element.setAttribute("data-id", id);
     element.setAttribute("class", "component");
-    comp.render.update.bind(componentList[id])(element);
 
     svgSketch.appendChild(element);
-  });
+
+    if (element.nodeName == 'IMG') {
+      element.onload = () => {
+        comp.render.update.bind(pageAndComponent[pageFocus].component[id])(element);
+      }
+    }
+
+    comp.render.update.bind(pageAndComponent[pageFocus].component[id])(element);
+  }
   
   if (arrNumber.length > 0) {
     componentCount = Math.max.apply(null, arrNumber) + 1;
@@ -111,7 +142,7 @@ function loadComponentFromJson(json) {
 }
 
 function updateComponentPosition(id, x, y) {
-  let name = componentList[id].name;
+  let name = pageAndComponent[pageFocus].component[id].name;
       
   let comp;
       
@@ -129,12 +160,12 @@ function updateComponentPosition(id, x, y) {
   
   let element = $(svgSketch).find("[data-id='" + id + "']")[0];
   let box = element.getBBox();
-  comp.render.move.bind(componentList[id])(x, y, box.width, box.height);
-  comp.render.update.bind(componentList[id])(element);
+  comp.render.move.bind(pageAndComponent[pageFocus].component[id])(x, y, box.width, box.height);
+  comp.render.update.bind(pageAndComponent[pageFocus].component[id])(element);
 }
 
 function updateComponentProperty(id) {
-  let name = componentList[id].name;
+  let name = pageAndComponent[pageFocus].component[id].name;
       
   let comp;
       
@@ -149,7 +180,7 @@ function updateComponentProperty(id) {
     return;
   }
 
-  comp.render.update.bind(componentList[id])($(svgSketch).find("[data-id='" + id + "']")[0]);
+  comp.render.update.bind(pageAndComponent[pageFocus].component[id])($(svgSketch).find("[data-id='" + id + "']")[0]);
 }
 
 function getAbstractComponent() {
@@ -159,7 +190,7 @@ function getAbstractComponent() {
 function updatePropertyTable() {
   let focus = $(".focus")[0];
   let id = focus.getAttribute("data-id");
-  let name = componentList[id].name;
+  let name = pageAndComponent[pageFocus].component[id].name;
   
   let comp;
   
@@ -183,23 +214,23 @@ function updatePropertyTable() {
       html += `<div class="value">`;
       
       if (property.type === "text") {
-        html += "<input type=\"text\" class=\"property\" data-property=\"" + propertyName + "\" value=\"" + componentList[id].property[propertyName] + "\">";
+        html += "<input type=\"text\" class=\"property\" data-property=\"" + propertyName + "\" value=\"" + pageAndComponent[pageFocus].component[id].property[propertyName] + "\">";
       } else if (property.type === "number") {
-        html += `<input type="number" class="property${(typeof property.inputOffset !== "undefined" ? ` input-${property.inputOffset}-offset` : '')}" data-property="${propertyName}" value="${componentList[id].property[propertyName]}">`;
+        html += `<input type="number" class="property${(typeof property.inputOffset !== "undefined" ? ` input-${property.inputOffset}-offset` : '')}" data-property="${propertyName}" value="${pageAndComponent[pageFocus].component[id].property[propertyName]}">`;
       } else if (property.type === "color") {
-        html += "<input type=\"text\" class=\"input-color property\" data-property=\"" + propertyName + "\" value=\"" + componentList[id].property[propertyName] + "\">";
+        html += "<input type=\"text\" class=\"input-color property\" data-property=\"" + propertyName + "\" value=\"" + pageAndComponent[pageFocus].component[id].property[propertyName] + "\">";
       } else if (property.type === "choice") {
         html += "<select class=\"property\" data-property=\"" + propertyName + "\">";
         for (let i=0;i<property.choice.length;i++) {
-          html += "<option value=\"" + property.choice[i].value + "\"" + (property.choice[i].value === componentList[id].property[propertyName] ? " selected" : "") + ">" + property.choice[i].label + "</option>";
+          html += "<option value=\"" + property.choice[i].value + "\"" + (property.choice[i].value === pageAndComponent[pageFocus].component[id].property[propertyName] ? " selected" : "") + ">" + property.choice[i].label + "</option>";
         }
         html += "</select>";
       } else if (property.type === "file") {
-        html += "<button class=\"property file-select\" data-property=\"" + propertyName + "\" value=\"" + componentList[id].property[propertyName] + "\">Choose</button>";
+        html += "<button class=\"property file-select\" data-property=\"" + propertyName + "\" value=\"" + pageAndComponent[pageFocus].component[id].property[propertyName] + "\">Choose</button>";
       } else if (property.type === "font") {
         html += "<select class=\"property\" data-property=\"" + propertyName + "\">";
         for (let item of listFont) {
-          html += "<option value=\"" + item.name + "\"" + (item.name === componentList[id].property[propertyName] ? " selected" : "") + ">" + item.name + "</option>";
+          html += "<option value=\"" + item.name + "\"" + (item.name === pageAndComponent[pageFocus].component[id].property[propertyName] ? " selected" : "") + ">" + item.name + "</option>";
         }
         html += "</select>";
 
@@ -209,7 +240,7 @@ function updatePropertyTable() {
       html += "</div>";
       html += "</li>";
     } else {
-      /* html += componentList[id].property[propertyName]; */
+      /* html += pageAndComponent[pageFocus].component[id].property[propertyName]; */
     }
     
   });
@@ -229,7 +260,7 @@ function updatePropertyTable() {
     let focus = $(".focus")[0];
     let id = focus.getAttribute("data-id");
     
-    let name = componentList[id].name;
+    let name = pageAndComponent[pageFocus].component[id].name;
   
     let comp;
 
@@ -252,7 +283,7 @@ function updatePropertyTable() {
         if (typeof property.min !== "function") {
           min = property.min;
         } else {
-          min = property.min.bind(componentList[id])();
+          min = property.min.bind(pageAndComponent[pageFocus].component[id])();
         }
         if (propertyValue < min) {
           alert("Error, Minimum value of this property is " + min);
@@ -265,7 +296,7 @@ function updatePropertyTable() {
         if (typeof property.max !== "function") {
           max = property.max;
         } else {
-          max = property.max.bind(componentList[id])();
+          max = property.max.bind(pageAndComponent[pageFocus].component[id])();
         }
         if (propertyValue > max) {
           alert("Error, Maximum value of this property is " + max);
@@ -273,42 +304,42 @@ function updatePropertyTable() {
           return;
         }
       }
-      componentList[id].property[propertyName] = propertyValue;
+      pageAndComponent[pageFocus].component[id].property[propertyName] = propertyValue;
     } else if (property.type === "choice") {
       if (typeof comp.property[propertyName].choice[0].value === "number") {
-        componentList[id].property[propertyName] = +propertyValue;
+        pageAndComponent[pageFocus].component[id].property[propertyName] = +propertyValue;
       } else {
-        componentList[id].property[propertyName] = propertyValue;
+        pageAndComponent[pageFocus].component[id].property[propertyName] = propertyValue;
       }
     } else if (property.type === "text") {
       if (typeof property.pattern === "object") {
         if (property.pattern.test(propertyValue) === false) {
           alert("Error, Value not match");
-          e.target.value = componentList[id].property[propertyName];
+          e.target.value = pageAndComponent[pageFocus].component[id].property[propertyName];
           return;
         }
       }
 /*       if (typeof property.validate !== "undefined") {
         if (property.validate === "font") {
-          propertyValue = textFilter(propertyValue, getFontFromName(componentList[id].property.font).range);
+          propertyValue = textFilter(propertyValue, getFontFromName(pageAndComponent[pageFocus].component[id].property.font).range);
         }
       } */
-      componentList[id].property[propertyName] = propertyValue;
+      pageAndComponent[pageFocus].component[id].property[propertyName] = propertyValue;
     } else if (property.type === "color") {
       if (/^#[0-9a-fA-F]{6}$/.test(propertyValue) === false) {
         alert("Error, Value not match of #RGB");
-        e.target.value = componentList[id].property[propertyName];
+        e.target.value = pageAndComponent[pageFocus].component[id].property[propertyName];
         return;
       }
-      componentList[id].property[propertyName] = propertyValue;
+      pageAndComponent[pageFocus].component[id].property[propertyName] = propertyValue;
     } else if (property.type === "file") {
-      componentList[id].property[propertyName] = propertyValue;
+      pageAndComponent[pageFocus].component[id].property[propertyName] = propertyValue;
     } else if (property.type === "font") {
-      componentList[id].property[propertyName] = propertyValue;
+      pageAndComponent[pageFocus].component[id].property[propertyName] = propertyValue;
     }
     
     if (typeof property.change === "function") {
-      await property.change.bind(componentList[id])();
+      await property.change.bind(pageAndComponent[pageFocus].component[id])();
       updatePropertyTable();
     }
     
@@ -334,7 +365,7 @@ async function buildComponentsGetCode() {
   code += "\n";
   
   for (const id of Object.keys(componentList)) {
-    let name = componentList[id].name;
+    let name = pageAndComponent[pageFocus].component[id].name;
   
     let comp;
 
@@ -348,9 +379,9 @@ async function buildComponentsGetCode() {
       return;
     }
 
-    code += `/* ========== ${componentList[id].property.name} ========== */\n`;
-    code += await comp.build.bind(componentList[id])();
-    code += `/* ====== END of ${componentList[id].property.name} ====== */\n`;
+    code += `/* ========== ${pageAndComponent[pageFocus].component[id].property.name} ========== */\n`;
+    code += await comp.build.bind(pageAndComponent[pageFocus].component[id])();
+    code += `/* ====== END of ${pageAndComponent[pageFocus].component[id].property.name} ====== */\n`;
     code += "\n";
   }
   

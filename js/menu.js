@@ -6,13 +6,63 @@ const template = [
       label: 'File',
       submenu: [
         {
-          label: "New"
+          label: "New",
+          click: () => location.reload()
         },
         {
-          label: "Open"
+          label: "Open",
+          click: async () => {
+            let result = await dialog.showOpenDialogSync({
+              properties: [
+                'openFile'
+              ],
+              filters: [{ 
+                  name: 'GD', 
+                  extensions: ['gd'] 
+              }]
+            });
+
+            if (result == undefined) {
+              return;
+            }
+
+            OpenfilePath = result[0];
+            
+            return fs.readFile(OpenfilePath, (err, data) => {
+              allPageFromJson(data);
+
+              $("#status").text(`Open file ${OpenfilePath}`);
+            });
+          }
         },
         {
-          label: "Save as"
+          label: "Save",
+          click: async () => {
+            return fs.writeFile(OpenfilePath, allPageToJson(), () => {
+                $("#status").text(`Save file to ${OpenfilePath}`);
+            });
+          }
+        },
+        {
+          label: "Save as",
+          click: async () => {
+            let result = await dialog.showSaveDialog({
+                filters: [{ 
+                    name: 'GD', 
+                    extensions: ['gd'] 
+                }]
+            });
+    
+            if (result.canceled) {
+                return;
+            }
+
+            OpenfilePath = result.filePath;
+
+            return fs.writeFile(filePath, allPageToJson(), () => {
+                $("#status").text(`Save as to ${OpenfilePath}`);
+            });
+          }
         },
         { type: 'separator' },
         { role: 'quit' }

@@ -6,7 +6,7 @@ function updateComponentFrame() {
     let focus = $(".focus")[0];
     // let offset = $("#sketch").offset();
     let id = focus.getAttribute("data-id");
-    let name = componentList[id].name;
+    let name = pageAndComponent[pageFocus].component[id].name;
     
     let comp;
       
@@ -21,7 +21,7 @@ function updateComponentFrame() {
       return;
     }
 
-    let move = comp.render.frame.bind(componentList[id])();
+    let move = comp.render.frame.bind(pageAndComponent[pageFocus].component[id])();
     if (move.length == 4) {
       x = move[0];
       y = move[1];
@@ -156,7 +156,7 @@ $(function() {
       let focus = $(".focus");
       let id = focus.attr("data-id");
       focus.remove();
-      delete componentList[id];
+      delete pageAndComponent[pageFocus].component[id];
       
       // Hide frame
       updateComponentFrame();
