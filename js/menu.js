@@ -38,6 +38,20 @@ const template = [
         {
           label: "Save",
           click: async () => {
+            if (typeof OpenfilePath === "undefined") {
+                let result = await dialog.showSaveDialog({
+                    filters: [{ 
+                        name: 'GD', 
+                        extensions: ['gd'] 
+                    }]
+                });
+        
+                if (result.canceled) {
+                    return;
+                }
+
+                OpenfilePath = result.filePath;
+            }
             return fs.writeFile(OpenfilePath, allPageToJson(), () => {
                 $("#status").text(`Save file to ${OpenfilePath}`);
             });
@@ -59,7 +73,7 @@ const template = [
 
             OpenfilePath = result.filePath;
 
-            return fs.writeFile(filePath, allPageToJson(), () => {
+            return fs.writeFile(OpenfilePath, allPageToJson(), () => {
                 $("#status").text(`Save as to ${OpenfilePath}`);
             });
           }
@@ -162,15 +176,17 @@ const template = [
         { type: 'separator' },
         {
           label: 'Check of Updates...',
-          click: async () => {
-            
-          }
+          click: () => shell.openExternal('https://github.com/ioxgd/IOXGD-Designer/releases')
         },
         { type: 'separator' },
         {
           label: 'About',
           click: async () => {
-            
+            dialog.showMessageBox({
+              type: "info",
+              title: "About",
+              message: `IOXGD Designer version ${pjson.version}`
+            });
           }
         },
       ]

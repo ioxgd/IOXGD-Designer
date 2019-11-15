@@ -364,7 +364,7 @@ async function buildComponentsGetCode() {
   code += "lv_obj_set_style(lv_scr_act(), &style_screen);\n"
   code += "\n";
   
-  for (const id of Object.keys(componentList)) {
+  for (const id of Object.keys(pageAndComponent[pageFocus].component)) {
     let name = pageAndComponent[pageFocus].component[id].name;
   
     let comp;
@@ -408,7 +408,7 @@ async function buildFontSaveFileGetCode(path, callback) {
     }
     if (typeof callback === "function") callback(`Convarting ${font.name} to C Array`);
     try {
-      let cmd = `bin\\lv_font_conv_v0.3.1_x64.exe --font "${font.file}" --bpp 4 --size ${font.size} -r ${font.range} --format lvgl --no-compress -o "${path}\\${font.name}.c"`;
+      let cmd = `${__dirname}\\bin\\lv_font_conv_v0.3.1_x64.exe --font "${font.file}" --bpp 4 --size ${font.size} -r ${font.range} --format lvgl --no-compress -o "${path}\\${font.name}.c"`;
       await execShellCommand(cmd);
       code += `LV_FONT_DECLARE(${font.name});\n`;
     } catch(e) {
