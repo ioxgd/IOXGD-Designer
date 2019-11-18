@@ -123,6 +123,12 @@ function updateFontList() {
     });
 }
 
+function updateFontInArray() {
+    for (font of listFont) {
+        document.fonts.add(new FontFace(font.name, `url('${font.file.replace(/\\/g, '\\\\')}')`));
+    }
+}
+
 let getFontFromName = (name) => listFont.find((item) => item.name === name);
 
 $(function() {

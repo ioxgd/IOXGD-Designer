@@ -6,6 +6,7 @@ app.on('ready', () => {
     win = new BrowserWindow({
       width: 800,
       height: 600,
+      icon: `${__dirname}/image/icon.ico`,
       webPreferences: {
         nodeIntegration: true
       },

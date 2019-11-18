@@ -201,11 +201,11 @@ $(function() {
     let code = "";
     code += `<li>`;
     code += `<div class="label">Main color</div>`;
-    code += `<div class="value"><input type="text" class="input-color property" data-property="main_color" value="${pageBackground.main_color}"></div>`;
+    code += `<div class="value"><input type="text" class="input-color property" data-property="main_color" value="${pageAndComponent[pageFocus].background.main_color}"></div>`;
     code += `</li>`;
     code += `<li>`;
     code += `<div class="label">Gradient color</div>`;
-    code += `<div class="value"><input type="text" class="input-color property" data-property="grad_color" value="${pageBackground.grad_color}"></div>`;
+    code += `<div class="value"><input type="text" class="input-color property" data-property="grad_color" value="${pageAndComponent[pageFocus].background.grad_color}"></div>`;
     code += `</li>`;
     $("#property-box").html(code);
 
@@ -216,10 +216,10 @@ $(function() {
 
     $(".property").change(async function(e) {
       let propertyName = e.target.getAttribute("data-property");
-      pageBackground[propertyName] = e.target.value;
+      pageAndComponent[pageFocus].background[propertyName] = e.target.value;
 
       $("#sketch").css({
-        background: `linear-gradient(180deg, ${pageBackground.main_color} 0%, ${pageBackground.grad_color} 100%)`,
+        background: `linear-gradient(180deg, ${pageAndComponent[pageFocus].background.main_color} 0%, ${pageAndComponent[pageFocus].background.grad_color} 100%)`,
       });
     });
   });

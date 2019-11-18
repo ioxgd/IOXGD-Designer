@@ -9,15 +9,15 @@ var pageFocus = 0;
 var pageAndComponent = [
   {
     name: 'index',
+    background: {
+      main_color: "#FFFFFF",
+      grad_color: "#FFFFFF"
+    },
     component: {
 
     }
   } 
 ];
-var pageBackground = {
-  main_color: "#FFFFFF",
-  grad_color: "#FFFFFF"
-};
 
 function addComponent(comp) {
   abstractComponentList.push(comp);
@@ -76,13 +76,21 @@ function createComponent(name) {
 }
 
 function allPageToJson() {
-  return JSON.stringify(pageAndComponent, null, '\t');
+  return JSON.stringify({
+    font: listFont,
+    page: pageAndComponent
+  }, null, '\t');
 }
 
 function allPageFromJson(json) {
-  pageAndComponent = JSON.parse(json);
+  let parse = JSON.parse(json);
+  listFont = parse.font;
+  pageAndComponent = parse.page;
 
+  updateFontInArray();
   rerenderComponent();
+  $("#sketch").click();
+  $(".property").change();
 }
 
 function waitFor(selector) {
@@ -203,6 +211,8 @@ function updatePropertyTable() {
     alert("Error!, not found " + name);
     return;
   }
+
+  $(".property").unbind();
   
   var html = "";
   Object.keys(comp.property).forEach(function(propertyName) {
@@ -359,8 +369,8 @@ async function buildComponentsGetCode() {
   var code = "";
   code += "static lv_style_t style_screen;\n";
   code += "lv_style_copy(&style_screen, &lv_style_plain);\n";
-  code += `style_screen.body.main_color = lv_color_hex(0x${pageBackground.main_color.substring(1)});\n`;
-  code += `style_screen.body.grad_color = lv_color_hex(0x${pageBackground.grad_color.substring(1)});\n`;
+  code += `style_screen.body.main_color = lv_color_hex(0x${pageAndComponent[pageFocus].background.main_color.substring(1)});\n`;
+  code += `style_screen.body.grad_color = lv_color_hex(0x${pageAndComponent[pageFocus].background.grad_color.substring(1)});\n`;
   code += "lv_obj_set_style(lv_scr_act(), &style_screen);\n"
   code += "\n";
   

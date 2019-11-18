@@ -7,10 +7,12 @@ const template = [
       submenu: [
         {
           label: "New",
+          accelerator: 'Ctrl+N',
           click: () => location.reload()
         },
         {
           label: "Open",
+          accelerator: 'Ctrl+O',
           click: async () => {
             let result = await dialog.showOpenDialogSync({
               properties: [
@@ -31,12 +33,13 @@ const template = [
             return fs.readFile(OpenfilePath, (err, data) => {
               allPageFromJson(data);
 
-              $("#status").text(`Open file ${OpenfilePath}`);
+              $("#status").text(`Open file ${OpenfilePath} at ${(new Date()).toLocaleTimeString('th-TH')}`);
             });
           }
         },
         {
           label: "Save",
+          accelerator: 'Ctrl+S',
           click: async () => {
             if (typeof OpenfilePath === "undefined") {
                 let result = await dialog.showSaveDialog({
@@ -53,12 +56,13 @@ const template = [
                 OpenfilePath = result.filePath;
             }
             return fs.writeFile(OpenfilePath, allPageToJson(), () => {
-                $("#status").text(`Save file to ${OpenfilePath}`);
+                $("#status").text(`Save file to ${OpenfilePath} at ${(new Date()).toLocaleTimeString('th-TH')}`);
             });
           }
         },
         {
           label: "Save as",
+          accelerator: 'Ctrl+Shift+S',
           click: async () => {
             let result = await dialog.showSaveDialog({
                 filters: [{ 
@@ -74,7 +78,7 @@ const template = [
             OpenfilePath = result.filePath;
 
             return fs.writeFile(OpenfilePath, allPageToJson(), () => {
-                $("#status").text(`Save as to ${OpenfilePath}`);
+                $("#status").text(`Save as to ${OpenfilePath} at ${(new Date()).toLocaleTimeString('th-TH')}`);
             });
           }
         },
