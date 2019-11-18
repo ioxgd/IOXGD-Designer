@@ -112,7 +112,7 @@ let compile = async function(log_cb, useOldFile) {
         }
       }
 
-      let cmd = `${compilerDir}/${compiler.c} ${flag.c} ${includeDir.map(x => `-I "${x}"`).join(' ')} -c "${file}" -o "${outFile}"`;
+      let cmd = `"${compilerDir}/${compiler.c}" ${flag.c} ${includeDir.map(x => `-I "${x}"`).join(' ')} -c "${file}" -o "${outFile}"`;
       try {
         log_cb(`Compile ${fileName}`);
         const output = await execShellCommand(cmd);
@@ -149,7 +149,7 @@ let compile = async function(log_cb, useOldFile) {
 }
 
 let run = function() {
-  return exec(`${outputDir}/${outputFile}`);
+  return exec(`"${outputDir}/${outputFile}"`);
 }
 
 let writeCode = async function(code, font) {
