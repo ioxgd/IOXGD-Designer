@@ -130,6 +130,8 @@ addComponent({
     bright: {
       label: "Brightness",
       type: "number",
+      min: 0,
+      max: 255,
       default: 255
     }
   },
