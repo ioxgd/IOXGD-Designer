@@ -52,3 +52,27 @@ let objectNameGen = (offset) => {
 
   return offset + nextNumber;
 };
+
+let propertyToAlign = (property) => {
+  let obj_align;
+  if (property.alignX === 0 && property.alignY === 0) {
+    obj_align = "LV_ALIGN_IN_TOP_LEFT";
+  } else if (property.alignX === 1 && property.alignY === 0) {
+    obj_align = "LV_ALIGN_IN_TOP_MID";
+  } else if (property.alignX === 2 && property.alignY === 0) {
+    obj_align = "LV_ALIGN_IN_TOP_RIGHT";
+  } else if (property.alignX === 0 && property.alignY === 1) {
+    obj_align = "LV_ALIGN_IN_LEFT_MID";
+  } else if (property.alignX === 1 && property.alignY === 1) {
+    obj_align = "LV_ALIGN_CENTER";
+  } else if (property.alignX === 2 && property.alignY === 1) {
+    obj_align = "LV_ALIGN_IN_RIGHT_MID";
+  } else if (property.alignX === 0 && property.alignY === 2) {
+    obj_align = "LV_ALIGN_IN_BOTTOM_LEFT";
+  } else if (property.alignX === 1 && property.alignY === 2) {
+    obj_align = "LV_ALIGN_IN_BOTTOM_MID";
+  } else if (property.alignX === 2 && property.alignY === 2) {
+    obj_align = "LV_ALIGN_IN_BOTTOM_RIGHT";
+  }
+  return obj_align;
+}

@@ -106,33 +106,12 @@ addComponent({
     },
   },
   build: async function() {
-    let obj_align;
-    if (this.property.alignX === 0 && this.property.alignY === 0) {
-      obj_align = "LV_ALIGN_IN_TOP_LEFT";
-    } else if (this.property.alignX === 1 && this.property.alignY === 0) {
-      obj_align = "LV_ALIGN_IN_TOP_MID";
-    } else if (this.property.alignX === 2 && this.property.alignY === 0) {
-      obj_align = "LV_ALIGN_IN_TOP_RIGHT";
-    } else if (this.property.alignX === 0 && this.property.alignY === 1) {
-      obj_align = "LV_ALIGN_IN_LEFT_MID";
-    } else if (this.property.alignX === 1 && this.property.alignY === 1) {
-      obj_align = "LV_ALIGN_CENTER";
-    } else if (this.property.alignX === 2 && this.property.alignY === 1) {
-      obj_align = "LV_ALIGN_IN_RIGHT_MID";
-    } else if (this.property.alignX === 0 && this.property.alignY === 2) {
-      obj_align = "LV_ALIGN_IN_BOTTOM_LEFT";
-    } else if (this.property.alignX === 1 && this.property.alignY === 2) {
-      obj_align = "LV_ALIGN_IN_BOTTOM_MID";
-    } else if (this.property.alignX === 2 && this.property.alignY === 2) {
-      obj_align = "LV_ALIGN_IN_BOTTOM_RIGHT";
-    }
-
     let code = "";
 
     // Image object
     code += `lv_obj_t* ${this.property.name} = lv_img_create(lv_scr_act(), NULL);\n`;
     code += `// lv_img_set_src(${this.property.name}, "${this.property.src}"); // TODO\n`;
-    code += `lv_obj_align(${this.property.name}, NULL, ${obj_align}, ${this.property.x}, ${this.property.y});\n`;
+    code += `lv_obj_align(${this.property.name}, NULL, ${propertyToAlign(this.property)}, ${this.property.x}, ${this.property.y});\n`;
     code += `\n`;
 
     code += `lv_obj_set_hidden(${this.property.name}, ${this.property.hidden === 0 ? 'true' : 'false'});`;
