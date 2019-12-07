@@ -265,6 +265,10 @@ addComponent({
     code += `lv_obj_t* ${this.property.name}_label = lv_label_create(${this.property.name}, NULL);\n`;
     code += `lv_label_set_style(${this.property.name}_label, LV_LABEL_STYLE_MAIN, &${this.property.name}_label_style);\n`;
     code += `lv_label_set_text(${this.property.name}_label, "${this.property.text}");\n`;
+    code += `\n`;
+
+    code += `lv_obj_set_hidden(${this.property.name}, ${this.property.hidden === 0 ? 'true' : 'false'});`;
+    code += `\n`;
 
     return code;
   }

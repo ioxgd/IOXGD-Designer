@@ -346,6 +346,10 @@ addComponent({
       code += "\n";
       code += `lv_sw_on(${this.property.name}, LV_ANIM_OFF);\n`;
     }
+    code += `\n`;
+
+    code += `lv_obj_set_hidden(${this.property.name}, ${this.property.hidden === 0 ? 'true' : 'false'});`;
+    code += `\n`;
     
     return code;
   }

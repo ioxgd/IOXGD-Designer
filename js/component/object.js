@@ -168,9 +168,9 @@ addComponent({
         $(element).css({
           width: this.property.width,
           height: this.property.height,
-          background: `linear-gradient(180deg, ${this.property.main_color} 0%, ${this.property.grad_color} 100%)`,
-          opacity: this.property.opacity,
-          border: `${this.property.border_width}px solid ${this.property.border_color}`,
+          background: `linear-gradient(180deg, ${hexToRgbA(this.property.main_color, this.property.opacity / 255)} 0%, ${hexToRgbA(this.property.grad_color, this.property.opacity / 255)} 100%)`,
+          // opacity: this.property.opacity / 255,
+          border: `${this.property.border_width}px solid ${hexToRgbA(this.property.border_color, this.property.border_opacity / 255)}`,
           "border-radius": `${this.property.radius}px`,
           "box-shadow": `0 ${this.property.shadow_type == 0 ? this.property.shadow_width : 0}px ${this.property.shadow_width}px ${this.property.shadow_color}`,
         });
@@ -199,9 +199,7 @@ addComponent({
       } else if (this.property.alignX === 2 && this.property.alignY === 2) {
         obj_align = "LV_ALIGN_IN_BOTTOM_RIGHT";
       }
-  
-      let font = getFontFromName(this.property.font);
-  
+
       let code = "";
       code += `static lv_style_t ${this.property.name}_style;\n`;
       code += `lv_style_copy(&${this.property.name}_style, &lv_style_plain);\n`;
@@ -222,6 +220,9 @@ addComponent({
       code += `lv_obj_set_style(${this.property.name}, &${this.property.name}_style);\n`;
       code += `lv_obj_set_size(${this.property.name}, ${this.property.width}, ${this.property.height});\n`;
       code += `lv_obj_align(${this.property.name}, NULL, ${obj_align}, ${this.property.x}, ${this.property.y});\n`;
+      code += `\n`;
+      
+      code += `lv_obj_set_hidden(${this.property.name}, ${this.property.hidden === 0 ? 'true' : 'false'});`;
       code += `\n`;
 
       return code;

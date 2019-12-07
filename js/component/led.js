@@ -158,7 +158,7 @@ addComponent({
         width: this.property.width,
         height: this.property.height,
         background: `linear-gradient(180deg, ${this.property.main_color} 0%, ${this.property.grad_color} 100%)`,
-        border: `${this.property.border_width}px solid ${this.property.border_color}`,
+        border: `${this.property.border_width}px solid ${hexToRgbA(this.property.border_color, this.property.border_opacity / 255)}`,
         "border-radius": `100%`,
         "box-shadow": `0 0 ${this.property.shadow_width}px ${this.property.shadow_color}`,
       });
@@ -209,6 +209,10 @@ addComponent({
     code += `lv_obj_set_size(${this.property.name}, ${this.property.width}, ${this.property.height});\n`;
     code += `lv_obj_align(${this.property.name}, NULL, ${obj_align}, ${this.property.x}, ${this.property.y});\n`;
     code += `lv_led_set_bright(${this.property.name}, ${this.property.bright});\n`;
+    code += `\n`;
+
+    code += `lv_obj_set_hidden(${this.property.name}, ${this.property.hidden === 0 ? 'true' : 'false'});`;
+    code += `\n`;
 
     return code;
   }

@@ -248,6 +248,10 @@ addComponent({
     code += `lv_label_set_text(${this.property.name}, "${this.property.text}");\n`;
     code += `lv_obj_set_size(${this.property.name}, ${this.property.width}, ${this.property.height});\n`;
     code += `lv_obj_align(${this.property.name}, NULL, ${obj_align}, ${this.property.x}, ${this.property.y});\n`;
+    code += `\n`;
+
+    code += `lv_obj_set_hidden(${this.property.name}, ${this.property.hidden === 0 ? 'true' : 'false'});`;
+    code += `\n`;
 
     return code;
   }

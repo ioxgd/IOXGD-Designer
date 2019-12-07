@@ -334,6 +334,10 @@ addComponent({
     code += "\n";
     code += `lv_slider_set_range(${this.property.name}, ${this.property.range_min}, ${this.property.range_max});\n`;
     code += `lv_slider_set_value(${this.property.name}, ${this.property.value}, LV_ANIM_OFF);\n`;
+    code += `\n`;
+
+    code += `lv_obj_set_hidden(${this.property.name}, ${this.property.hidden === 0 ? 'true' : 'false'});`;
+    code += `\n`;
     
     return code;
   }

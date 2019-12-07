@@ -254,6 +254,10 @@ addComponent({
     code += `lv_chart_set_series_width(${this.property.name}, ${this.property.series_width});\n`;
     code += `lv_chart_set_div_line_count(${this.property.name}, ${this.property.division_h}, ${this.property.division_v});\n`;
     code += `lv_chart_set_range(${this.property.name}, ${this.property.range_min}, ${this.property.range_max});\n`;
+    code += `\n`;
+
+    code += `lv_obj_set_hidden(${this.property.name}, ${this.property.hidden === 0 ? 'true' : 'false'});`;
+    code += `\n`;
 
     return code;
   }
