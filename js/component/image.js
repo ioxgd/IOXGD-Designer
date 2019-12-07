@@ -7,12 +7,7 @@ addComponent({
       type: "text",
       pattern: /^\w+$/,
       default: function() {
-        if (typeof countImg === "undefined") {
-          countImg = 1;
-        } else {
-          countImg++;
-        }
-        return "img" + countImg;
+        return objectNameGen("img");
       }
     },
     hidden: {

@@ -35,3 +35,20 @@ let hexToRgbA = (hex, opa) => {
   }
   throw new Error('Bad Hex');
 }
+
+let objectNameGen = (offset) => {
+  let nextNumber = 1;
+  for (let component of Object.keys(pageAndComponent[pageFocus].component)) {
+    component = pageAndComponent[pageFocus].component[component];
+    if (typeof component.property.name !== "undefined") {
+      if (component.property.name.indexOf(offset) === 0) {
+        let number = parseInt(component.property.name.replace(/\D/g,''));
+        if (number >= nextNumber) {
+          nextNumber = number + 1;
+        }
+      }
+    }
+  }
+
+  return offset + nextNumber;
+};

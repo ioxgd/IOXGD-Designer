@@ -7,12 +7,7 @@ addComponent({
       type: "text",
       pattern: /^\w+$/,
       default: function() {
-        if (typeof countBtn === "undefined") {
-          countBtn = 1;
-        } else {
-          countBtn++;
-        }
-        return "btn" + countBtn;
+        return objectNameGen("btn");
       }
     },
     hidden: {

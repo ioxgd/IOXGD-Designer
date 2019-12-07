@@ -7,12 +7,7 @@ addComponent({
       type: "text",
       pattern: /^\w+$/,
       default: function() {
-        if (typeof countSlider === "undefined") {
-          countSlider = 1;
-        } else {
-          countSlider++;
-        }
-        return "slider" + countSlider;
+        return objectNameGen("slider");
       }
     },
     hidden: {

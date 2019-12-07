@@ -12,7 +12,7 @@ addComponent({
         } else {
           countLED++;
         }
-        return "led" + countLED;
+        return objectNameGen("led");
       }
     },
     hidden: {

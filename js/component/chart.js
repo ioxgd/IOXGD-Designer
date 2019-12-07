@@ -7,12 +7,7 @@ addComponent({
       type: "text",
       pattern: /^\w+$/,
       default: function() {
-        if (typeof countChart === "undefined") {
-          countChart = 1;
-        } else {
-          countChart++;
-        }
-        return "chart" + countChart;
+        return objectNameGen("chart");
       }
     },
     hidden: {

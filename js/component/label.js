@@ -7,12 +7,7 @@ addComponent({
       type: "text",
       pattern: /^\w+$/,
       default: function() {
-        if (typeof countText === "undefined") {
-          countText = 1;
-        } else {
-          countText++;
-        }
-        return "txt" + countText;
+        return objectNameGen("txt");
       }
     },
     hidden: {
