@@ -152,10 +152,10 @@ let run = function() {
   return exec(`"${outputDir}/${outputFile}"`);
 }
 
-let writeCode = async function(code, font) {
-  if (typeof font !== "string") font = "";
+let writeCode = async function(code, header) {
+  if (typeof header !== "string") header = "";
 
-  code = `#include "lvgl/lvgl.h"\n${font}\nvoid codeSimulator() {\n${code}\n}\n`;
+  code = `#include "lvgl/lvgl.h"\n${header}\nvoid codeSimulator() {\n${code}\n}\n`;
 
   fs.writeFileSync(`${projectDir}/codegen/codeSimulator.c`, code);
 }

@@ -367,6 +367,8 @@ function updatePropertyTable() {
 
 async function buildComponentsGetCode() {
   var code = "";
+  var header = "";
+
   code += "static lv_style_t style_screen;\n";
   code += "lv_style_copy(&style_screen, &lv_style_plain);\n";
   code += `style_screen.body.main_color = lv_color_hex(0x${pageAndComponent[pageFocus].background.main_color.substring(1)});\n`;
@@ -389,13 +391,22 @@ async function buildComponentsGetCode() {
       return;
     }
 
+    let compCode = await comp.build.bind(pageAndComponent[pageFocus].component[id])();
+
     code += `/* ========== ${pageAndComponent[pageFocus].component[id].property.name} ========== */\n`;
-    code += await comp.build.bind(pageAndComponent[pageFocus].component[id])();
+    code += typeof compCode === "object" ? compCode.content : compCode;
     code += `/* ====== END of ${pageAndComponent[pageFocus].component[id].property.name} ====== */\n`;
     code += "\n";
+
+    if (typeof compCode === "object") {
+      header += `/* ========== ${pageAndComponent[pageFocus].component[id].property.name} header ========== */\n`;
+      header += compCode.header;
+      header += `/* ====== END of ${pageAndComponent[pageFocus].component[id].property.name} header ====== */\n`;
+      header += "\n";
+    }
   }
   
-  return code;
+  return { header, content: code };
 }
 
 function execShellCommand(cmd) {

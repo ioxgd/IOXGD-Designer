@@ -206,9 +206,11 @@ addComponent({
     let font = getFontFromName(this.property.font);
 
     let code = "";
+    let header = "";
 
     // Button REL Style
-    code += `static lv_style_t ${this.property.name}_rel_style;\n`;
+    header += `static lv_style_t ${this.property.name}_rel_style;\n`;
+
     code += `lv_style_copy(&${this.property.name}_rel_style, &lv_style_plain);\n`;
     code += `${this.property.name}_rel_style.body.main_color = lv_color_hex(0x${this.property.rel_main_color.substring(1)});\n`;
     code += `${this.property.name}_rel_style.body.grad_color = lv_color_hex(0x${this.property.rel_grad_color.substring(1)});\n`;
@@ -218,7 +220,8 @@ addComponent({
     code += `\n`;
 
     // Button PR Style
-    code += `static lv_style_t ${this.property.name}_pr_style;\n`;
+    header += `static lv_style_t ${this.property.name}_pr_style;\n`;
+
     code += `lv_style_copy(&${this.property.name}_pr_style, &lv_style_plain);\n`;
     code += `${this.property.name}_pr_style.body.main_color = lv_color_hex(0x${this.property.pr_main_color.substring(1)});\n`;
     code += `${this.property.name}_pr_style.body.grad_color = lv_color_hex(0x${this.property.pr_grad_color.substring(1)});\n`;
@@ -228,7 +231,9 @@ addComponent({
     code += `\n`;
 
     // Button object
-    code += `lv_obj_t* ${this.property.name} = lv_btn_create(lv_scr_act(), NULL);\n`;
+    header += `lv_obj_t* ${this.property.name};\n`;
+    
+    code += `${this.property.name} = lv_btn_create(lv_scr_act(), NULL);\n`;
     code += `// lv_obj_set_event_cb(${this.property.name}, event_handler); // TODO\n`;
     code += `lv_btn_set_style(${this.property.name}, LV_BTN_STATE_REL, &${this.property.name}_rel_style);\n`;
     code += `lv_btn_set_style(${this.property.name}, LV_BTN_STATE_PR, &${this.property.name}_pr_style);\n`;
@@ -237,11 +242,15 @@ addComponent({
     code += `\n`;
 
     // Label object
-    code += `static lv_style_t ${this.property.name}_label_style;\n`;
+    header += `static lv_style_t ${this.property.name}_label_style;\n`;
+
     code += `lv_style_copy(&${this.property.name}_label_style, &lv_style_plain);\n`;
     code += `${this.property.name}_label_style.text.color = lv_color_hex(0x${this.property.color.substring(1)});\n`;
     code += `${this.property.name}_label_style.text.font = &${typeof font.variable !== "undefined" ? font.variable : font.name};\n`;
-    code += `lv_obj_t* ${this.property.name}_label = lv_label_create(${this.property.name}, NULL);\n`;
+
+    header += `lv_obj_t* ${this.property.name}_label;\n`;
+
+    code += `${this.property.name}_label = lv_label_create(${this.property.name}, NULL);\n`;
     code += `lv_label_set_style(${this.property.name}_label, LV_LABEL_STYLE_MAIN, &${this.property.name}_label_style);\n`;
     code += `lv_label_set_text(${this.property.name}_label, "${this.property.text}");\n`;
     code += `\n`;
@@ -249,6 +258,6 @@ addComponent({
     code += `lv_obj_set_hidden(${this.property.name}, ${this.property.hidden === 0 ? 'true' : 'false'});`;
     code += `\n`;
 
-    return code;
+    return { header, content: code };
   }
 });

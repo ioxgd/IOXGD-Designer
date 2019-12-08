@@ -211,16 +211,20 @@ addComponent({
     let font = getFontFromName(this.property.font);
 
     let code = "";
+    let header = "";
 
     // Style
-    code += `static lv_style_t ${this.property.name}_style;\n`;
+    header += `static lv_style_t ${this.property.name}_style;\n`;
+
     code += `lv_style_copy(&${this.property.name}_style, &lv_style_plain);\n`;
     code += `${this.property.name}_style.text.color = lv_color_hex(0x${this.property.color.substring(1)});\n`;
     code += `${this.property.name}_style.text.font = &${typeof font.variable !== "undefined" ? font.variable : font.name};\n`;
     code += `\n`;
 
     // Label object
-    code += `lv_obj_t* ${this.property.name} = lv_label_create(lv_scr_act(), NULL);\n`;
+    header += `lv_obj_t* ${this.property.name};\n`;
+
+    code += `${this.property.name} = lv_label_create(lv_scr_act(), NULL);\n`;
     code += `lv_label_set_style(${this.property.name}, LV_LABEL_STYLE_MAIN, &${this.property.name}_style);\n`;
     code += `lv_label_set_long_mode(${this.property.name}, ${long_mode_list[this.property.mode]});\n`;
     code += `lv_label_set_align(${this.property.name}, ${text_align_list[this.property.text_align]});\n`;
@@ -232,6 +236,6 @@ addComponent({
     code += `lv_obj_set_hidden(${this.property.name}, ${this.property.hidden === 0 ? 'true' : 'false'});`;
     code += `\n`;
 
-    return code;
+    return { header, content: code };
   }
 });

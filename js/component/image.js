@@ -107,9 +107,12 @@ addComponent({
   },
   build: async function() {
     let code = "";
+    let header = "";
 
     // Image object
-    code += `lv_obj_t* ${this.property.name} = lv_img_create(lv_scr_act(), NULL);\n`;
+    header += `lv_obj_t* ${this.property.name};\n`;
+    
+    code += `${this.property.name} = lv_img_create(lv_scr_act(), NULL);\n`;
     code += `// lv_img_set_src(${this.property.name}, "${this.property.src}"); // TODO\n`;
     code += `lv_obj_align(${this.property.name}, NULL, ${propertyToAlign(this.property)}, ${this.property.x}, ${this.property.y});\n`;
     code += `\n`;
@@ -117,6 +120,6 @@ addComponent({
     code += `lv_obj_set_hidden(${this.property.name}, ${this.property.hidden === 0 ? 'true' : 'false'});`;
     code += `\n`;
     
-    return code;
+    return { header, content: code };
   }
 });

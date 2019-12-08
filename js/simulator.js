@@ -9,7 +9,7 @@ let simulator_bulid = async () => {
     });
     let code = await buildComponentsGetCode();
 
-    await simulator.writeCode(code, fontCode);
+    await simulator.writeCode(code.content, `${fontCode}\n${code.header}`);
 
     await simulator.compile((msg) => {
         $("#status").text(msg);

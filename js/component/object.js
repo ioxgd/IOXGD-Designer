@@ -179,8 +179,11 @@ addComponent({
       },
     },
     build: async function() {
+      let header = "";
       let code = "";
-      code += `static lv_style_t ${this.property.name}_style;\n`;
+
+      header += `static lv_style_t ${this.property.name}_style;\n`;
+
       code += `lv_style_copy(&${this.property.name}_style, &lv_style_plain);\n`;
       code += `${this.property.name}_style.body.main_color = lv_color_hex(0x${this.property.main_color.substring(1)});\n`;
       code += `${this.property.name}_style.body.grad_color = lv_color_hex(0x${this.property.grad_color.substring(1)});\n`;
@@ -195,7 +198,9 @@ addComponent({
       code += `\n`;
   
       // Button object
-      code += `lv_obj_t* ${this.property.name} = lv_obj_create(lv_scr_act(), NULL);\n`;
+      header += `lv_obj_t* ${this.property.name};\n`;
+
+      code += `${this.property.name} = lv_obj_create(lv_scr_act(), NULL);\n`;
       code += `lv_obj_set_style(${this.property.name}, &${this.property.name}_style);\n`;
       code += `lv_obj_set_size(${this.property.name}, ${this.property.width}, ${this.property.height});\n`;
       code += `lv_obj_align(${this.property.name}, NULL, ${propertyToAlign(this.property)}, ${this.property.x}, ${this.property.y});\n`;
@@ -204,6 +209,6 @@ addComponent({
       code += `lv_obj_set_hidden(${this.property.name}, ${this.property.hidden === 0 ? 'true' : 'false'});`;
       code += `\n`;
 
-      return code;
+      return { header, content: code };
     }
   });

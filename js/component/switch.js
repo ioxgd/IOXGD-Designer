@@ -258,13 +258,14 @@ addComponent({
   },
   build: async function() {
     let code = "";
+    let header = "";
 
     // Style
-    code += `static lv_style_t ${this.property.name}_bg_style;\n`;
-    code += `static lv_style_t ${this.property.name}_indic_style;\n`;
-    code += `static lv_style_t ${this.property.name}_knob_on_style;\n`;
-    code += `static lv_style_t ${this.property.name}_knob_off_style;\n`;
-    code += "\n";
+    header += `static lv_style_t ${this.property.name}_bg_style;\n`;
+    header += `static lv_style_t ${this.property.name}_indic_style;\n`;
+    header += `static lv_style_t ${this.property.name}_knob_on_style;\n`;
+    header += `static lv_style_t ${this.property.name}_knob_off_style;\n`;
+    header += "\n";
 
     code += `lv_style_copy(&${this.property.name}_bg_style, &lv_style_pretty);\n`;
     code += `${this.property.name}_bg_style.body.radius = LV_RADIUS_CIRCLE;\n`;
@@ -312,7 +313,9 @@ addComponent({
     code += `${this.property.name}_knob_on_style.body.border.width = ${this.property.knob_on_border_width};\n`;
     code += "\n";
     
-    code += `lv_obj_t* ${this.property.name} = lv_sw_create(lv_scr_act(), NULL);\n`;
+    header += `lv_obj_t* ${this.property.name};\n`;
+
+    code += `${this.property.name} = lv_sw_create(lv_scr_act(), NULL);\n`;
     code += `lv_sw_set_style(${this.property.name}, LV_SW_STYLE_BG, &${this.property.name}_bg_style);\n`;
     code += `lv_sw_set_style(${this.property.name}, LV_SW_STYLE_INDIC, &${this.property.name}_indic_style);\n`;
     code += `lv_sw_set_style(${this.property.name}, LV_SW_STYLE_KNOB_ON, &${this.property.name}_knob_on_style);\n`;
@@ -330,6 +333,6 @@ addComponent({
     code += `lv_obj_set_hidden(${this.property.name}, ${this.property.hidden === 0 ? 'true' : 'false'});`;
     code += `\n`;
     
-    return code;
+    return { header, content: code };
   }
 });

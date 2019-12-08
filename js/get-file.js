@@ -20,8 +20,8 @@ $(function() {
         let filePath = result.filePath;
 
         let codeGen = await buildComponentsGetCode();
-        codeGen = codeGen.replace(/\n/g, "\n  ");
-        codeGen = codeGen.trim();
+        codeGen.content = codeGen.content.replace(/\n/g, "\n  ");
+        codeGen.content = codeGen.content.trim();
 
         let fontCode = await buildFontSaveFileGetCode(path.dirname(filePath), (msg) => {
             $("#status").text(msg);
@@ -32,8 +32,10 @@ $(function() {
         codePage += "\n";
         codePage += fontCode;
         codePage += "\n";
+        codePage += codeGen.header;
+        codePage += "\n";
         codePage += "void load_page() {\n";
-        codePage += `  ${codeGen}\n`;
+        codePage += `  ${codeGen.content}\n`;
         codePage += "}\n";
 
         console.log(codePage);
