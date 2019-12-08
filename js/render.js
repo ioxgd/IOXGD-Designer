@@ -399,10 +399,12 @@ async function buildComponentsGetCode() {
     code += "\n";
 
     if (typeof compCode === "object") {
-      header += `/* ========== ${pageAndComponent[pageFocus].component[id].property.name} header ========== */\n`;
-      header += compCode.header;
-      header += `/* ====== END of ${pageAndComponent[pageFocus].component[id].property.name} header ====== */\n`;
-      header += "\n";
+      if (compCode.header.length > 0) {
+        header += `/* ========== ${pageAndComponent[pageFocus].component[id].property.name} header ========== */\n`;
+        header += compCode.header;
+        header += `/* ====== END of ${pageAndComponent[pageFocus].component[id].property.name} header ====== */\n`;
+        header += "\n";
+      }
     }
   }
   

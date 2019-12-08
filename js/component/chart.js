@@ -25,6 +25,21 @@ addComponent({
       ],
       default: 1
     },
+    define: {
+      label: "Definition",
+      type: "choice",
+      choice: [
+        {
+          label: "Local",
+          value: 0
+        },
+        {
+          label: "Global",
+          value: 1
+        },
+      ],
+      default: 0
+    },
     alignX: {
       label: "Align X",
       type: "choice",
@@ -241,6 +256,11 @@ addComponent({
 
     code += `lv_obj_set_hidden(${this.property.name}, ${this.property.hidden === 0 ? 'true' : 'false'});`;
     code += `\n`;
+
+    if (this.property.define == 0) { // define local
+      code = `${header}\n${code}`;
+      header = "";
+    }
 
     return { header, content: code };
   }

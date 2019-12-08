@@ -30,10 +30,14 @@ $(function() {
         let codePage = "";
         codePage += "/* ======== Generate by IOXGD Designer ======== */\n";
         codePage += "\n";
-        codePage += fontCode;
-        codePage += "\n";
-        codePage += codeGen.header;
-        codePage += "\n";
+        if (fontCode.length > 0) {
+            codePage += fontCode;
+            codePage += "\n";
+        }
+        if (codeGen.header.length > 0) {
+            codePage += codeGen.header;
+            codePage += "\n";
+        }
         codePage += "void load_page() {\n";
         codePage += `  ${codeGen.content}\n`;
         codePage += "}\n";
