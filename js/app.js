@@ -79,24 +79,21 @@ function reconfigDraggable() {
     startY = event.pageY - $(".input-y-offset").val();
 
     $("#sketch").bind('mousemove', function(event, ui){
-      let x = event.pageX;
-      let y = event.pageY;
-      let moveX = x - startX;
-      let moveY = y - startY;
-
-      moveX = moveX * zoom;
-      moveY = moveY * zoom;
+      let moveX = event.pageX - startX;
+      let moveY = event.pageY - startY;
 
       moveX = Math.round(moveX / 10) * 10;
       moveY = Math.round(moveY / 10) * 10;
 
       $(".input-x-offset").val(Math.round(moveX)).change();
       $(".input-y-offset").val(Math.round(moveY)).change();
+    }).bind('mouseup', function(event, ui){
+      $(this).unbind('mousemove');
     });
   });
 
   element.bind('mouseup', function(event, ui){
-    $("#sketch").unbind('mousemove');
+    $(this).unbind('mousemove');
   });
 }
 
