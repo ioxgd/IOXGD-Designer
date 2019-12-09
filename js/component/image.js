@@ -98,7 +98,9 @@ addComponent({
   },
   render: {
     create: function(id) {
-      return document.createElement("img");
+      let img = document.createElement("img");
+      img.setAttribute("draggable", false);
+      return img;
     },
     /* move: function(x, y, width, height) {
       this.property.x = x + 1; // Fix offset bug
