@@ -422,8 +422,10 @@ function execShellCommand(cmd) {
     });
 }
 
-async function buildFontSaveFileGetCode(path, callback, repalceInclude) {
+async function buildFontSaveFileGetCode(path, callback, repalceInclude, repalceFile) {
   if (typeof repalceInclude === "undefined") repalceInclude = false;
+  if (typeof repalceFile === "undefined") repalceFile = 'Y';
+
   let code = "";
 
   for (let font of listFont) {
@@ -433,12 +435,24 @@ async function buildFontSaveFileGetCode(path, callback, repalceInclude) {
     if (typeof callback === "function") callback(`Convarting ${font.name} to C Array`);
     try {
       let output = `${path}\\${font.name}.c`;
+      if (fs.existsSync(output) && repalceFile === 'ASK') {
+        let result =  await dialog.showMessageBox({
+          type: "question",
+          title: "Confirm File Replace",
+          message: `This folder already contains a file named '${font.name}'. Would you like to replace file ?`,
+          buttons: [ "Skip", "Replace" ]
+        });
+        if (result === 0) {
+          continue;
+        }
+      } else if (fs.existsSync(output) && repalceFile === 'N') {
+        continue;
+      }
       let cmd = `"${__dirname}\\bin\\lv_font_conv_v0.3.1_x64.exe" --font "${font.file}" --bpp 4 --size ${font.size} -r ${font.range} --format lvgl --no-compress -o "${output}"`;
       await execShellCommand(cmd);
       code += `LV_FONT_DECLARE(${font.name});\n`;
       if (repalceInclude) {
         const data = await readFileAsync(output, 'utf8');
-        console.log(data);
         var result = data.replace(/#include \"lvgl\/lvgl.h\"/g, '#include "lvgl.h"');
         writeFileAsync(output, result, 'utf8');
       }

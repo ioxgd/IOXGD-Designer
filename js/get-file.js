@@ -25,7 +25,7 @@ $(function() {
 
         let fontCode = await buildFontSaveFileGetCode(path.dirname(filePath), (msg) => {
             $("#status").text(msg);
-        }, true);
+        }, true, 'ASK');
 
         let codePage = "";
         codePage += "/* ======== Generate by IOXGD Designer ======== */\n";
