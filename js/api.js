@@ -3,12 +3,12 @@ const API_SERVER_PORT = 12123;
 let sockets = [ ];
 let socketsId = 1;
 
-let stringifyData = (evant, data) => `evant: ${evant}\ndata: ${(new Buffer(data)).toString('base64')}\n\n`;
+let stringifyData = (evant, data) => `evant: ${evant}\ndata: ${Buffer.from(data).toString('base64')}\n\n`;
 
 let parseData = (data) => {
     try {
         let parse = /^evant: (.*)\ndata: (.*)\n\n$/gm.exec(data);
-        return { evant: parse[1], data: parse[2] };
+        return { evant: parse[1], data: Buffer.from(parse[2], 'base64').toString('utf-8') };
     } catch (err) {
         throw "data parse error";
     }
@@ -38,7 +38,7 @@ const server = net.createServer((socket) => {
         }
     });
     
-    socket.on('end', function() {
+    socket.on('close', function() {
         // console.log(`Closing connection id ${socket.id}`);
         let inx = sockets.findIndex((s) => s.id === socket.id);
         sockets.splice(inx, 1);
@@ -48,7 +48,7 @@ const server = net.createServer((socket) => {
         console.error(err);
     });
 
-    socket.write(stringifyData("page-data-update", allPageToJson()));
+    // socket.write(stringifyData("page-data-update", allPageToJson()));
 });
 
 setTimeout(() => {
