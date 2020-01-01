@@ -32,6 +32,7 @@ const template = [
             
             return fs.readFile(OpenfilePath, (err, data) => {
               allPageFromJson(data);
+              apiBroadcast("page-data-update", data);
 
               $("#status").text(`Open file ${OpenfilePath} at ${(new Date()).toLocaleTimeString('th-TH')}`);
             });
@@ -55,7 +56,10 @@ const template = [
 
                 OpenfilePath = result.filePath;
             }
-            return fs.writeFile(OpenfilePath, allPageToJson(), () => {
+
+            let json = allPageToJson();
+            apiBroadcast("page-data-update", json);
+            return fs.writeFile(OpenfilePath, json, () => {
                 $("#status").text(`Save file to ${OpenfilePath} at ${(new Date()).toLocaleTimeString('th-TH')}`);
             });
           }
@@ -77,7 +81,9 @@ const template = [
 
             OpenfilePath = result.filePath;
 
-            return fs.writeFile(OpenfilePath, allPageToJson(), () => {
+            let json = allPageToJson();
+            apiBroadcast("page-data-update", json);
+            return fs.writeFile(OpenfilePath, json, () => {
                 $("#status").text(`Save as to ${OpenfilePath} at ${(new Date()).toLocaleTimeString('th-TH')}`);
             });
           }
