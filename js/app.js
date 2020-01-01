@@ -60,6 +60,8 @@ function updateComponentFrame() {
 var startX = 0, startY = 0;
 function reconfigDraggable() {
   let element = $("#sketch > .component");
+
+  element.off();
     
   element.bind('mousedown', function(event, ui){
     // bring target to front
@@ -89,11 +91,13 @@ function reconfigDraggable() {
       $(".input-y-offset").val(Math.round(moveY)).change();
     }).bind('mouseup', function(event, ui){
       $(this).unbind('mousemove');
+      $(this).unbind('mouseup');
     });
   });
 
   element.bind('mouseup', function(event, ui){
     $(this).unbind('mousemove');
+    $(this).unbind('mouseup');
   });
 }
 
@@ -235,6 +239,7 @@ $(function() {
       let a = new jscolor(this, { hash:true });
     });
 
+    $(".property").off();
     $(".property").change(async function(e) {
       let propertyName = e.target.getAttribute("data-property");
       pageAndComponent[pageFocus].background[propertyName] = e.target.value;
@@ -243,6 +248,66 @@ $(function() {
         background: `linear-gradient(180deg, ${pageAndComponent[pageFocus].background.main_color} 0%, ${pageAndComponent[pageFocus].background.grad_color} 100%)`,
       });
     });
+  });
+
+  let ctrlDown = false;
+
+  $(document).keydown((e) => {
+    if (e.keyCode === 17 || e.keyCode === 91) ctrlDown = true;
+  }).keyup((e) => {
+    if (e.keyCode === 17 || e.keyCode === 91) ctrlDown = false;
+  });
+
+  let copyID = "";
+
+  let duplicateComponent = async (sourceID) => {
+    if (!sourceID) sourceID = $(".focus").attr("data-id");
+
+    let sourceComponent = pageAndComponent[pageFocus].component[sourceID];
+
+    if (!sourceComponent) {
+      return;
+    }
+    
+    let comp = abstractComponentList.find(e => e.name === sourceComponent.name);
+
+    if (typeof comp === "undefined") {
+      alert("Error!, not found " + name);
+      return;
+    }
+    
+    let newID = `component-${componentCount++}`;
+    
+    pageAndComponent[pageFocus].component[newID] = JSON.parse(JSON.stringify(sourceComponent));
+    pageAndComponent[pageFocus].component[newID].property.name = comp.property.name.default();
+    pageAndComponent[pageFocus].component[newID].property.x += 10;
+    pageAndComponent[pageFocus].component[newID].property.y += 10;
+    
+    let element = comp.render.create();
+    element.setAttribute("data-id", newID);
+    element.setAttribute("class", "component");
+
+    svgSketch.appendChild(element);
+
+    comp.render.update.bind(pageAndComponent[pageFocus].component[newID])(element);
+    
+    reconfigDraggable();
+
+    $(`.component[data-id='${newID}']`).click().mousedown().mouseup();
+
+    copyID = newID;
+  };
+
+  $(document).keydown((e) => {
+    if (ctrlDown && e.keyCode === 68) { // Ctrl+D (D is 68)
+      duplicateComponent();
+    } else if (ctrlDown && e.keyCode === 67) { // Ctrl+C (C is 67)
+      copyID = $(".focus").attr("data-id");
+    } else if (ctrlDown && e.keyCode === 86) { // Ctrl+V (C is 86)
+      if (copyID !== "") {
+        duplicateComponent(copyID);
+      }
+    }
   });
 
   $("#sketch").click();
