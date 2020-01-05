@@ -193,7 +193,7 @@ let updateSketchBackground = () => {
     for (let x=grid_size;x<800;x+=grid_size) {
       ctx.beginPath();
       ctx.setLineDash([ 10, 10 ]);
-      ctx.moveTo(x, 0);
+      ctx.moveTo(x, 5);
       ctx.lineTo(x, 480);
       ctx.strokeStyle = "#000000";
       ctx.lineWidth = 2;
@@ -202,7 +202,7 @@ let updateSketchBackground = () => {
     for (let y=grid_size;y<480;y+=grid_size) {
       ctx.beginPath();
       ctx.setLineDash([ 10, 10 ]);
-      ctx.moveTo(0, y);
+      ctx.moveTo(5, y);
       ctx.lineTo(800, y);
       ctx.strokeStyle = "#000000";
       ctx.lineWidth = 2;
