@@ -478,3 +478,11 @@ section.zoom-panel > button:hover {
 #font-list > li > div.delete:hover {
     background: #CB4335;
 }
+
+#grid-line {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 0;
+    opacity: 0.4;
+}

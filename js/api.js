@@ -20,6 +20,11 @@ let apiBroadcast = (evant, data) => {
     }
 };
 
+let broadcastPageContent = () => {
+    let json = allPageToJson();
+    apiBroadcast("page-data-update", json);
+}
+
 const server = net.createServer((socket) => {
     socket.id = socketsId;
     socketsId++;

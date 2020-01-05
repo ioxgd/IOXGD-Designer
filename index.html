@@ -25,6 +25,7 @@
         const path = require('path');
         const pjson = require('./package.json');
         const net = require('net');
+        const dialogs = require('dialogs')();
 
         const readFileAsync = promisify(fs.readFile);
         const writeFileAsync = promisify(fs.writeFile);

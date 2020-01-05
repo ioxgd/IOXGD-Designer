@@ -173,6 +173,46 @@ function updatePageListAndActive() {
   });
 }
 
+let show_grid = false;
+let grid_size = 100;
+
+let updateSketchBackground = () => {
+  let canvas = document.createElement("canvas");
+  canvas.width = 800;
+  canvas.height = 480;
+  let ctx = canvas.getContext("2d");
+
+  let gradient = ctx.createLinearGradient(0, 0, 0, 480);
+  gradient.addColorStop(0, pageAndComponent[pageFocus].background.main_color);
+  gradient.addColorStop(1, pageAndComponent[pageFocus].background.grad_color);
+  ctx.fillStyle = gradient;
+
+  ctx.fillRect(0, 0, 800, 480);
+
+  if (show_grid) {
+    for (let x=grid_size;x<800;x+=grid_size) {
+      ctx.beginPath();
+      ctx.setLineDash([ 10, 10 ]);
+      ctx.moveTo(x, 0);
+      ctx.lineTo(x, 480);
+      ctx.strokeStyle = "#000000";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    }
+    for (let y=grid_size;y<480;y+=grid_size) {
+      ctx.beginPath();
+      ctx.setLineDash([ 10, 10 ]);
+      ctx.moveTo(0, y);
+      ctx.lineTo(800, y);
+      ctx.strokeStyle = "#000000";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    }
+  }
+
+  svgSketch.style.background = `url(${canvas.toDataURL()})`;
+}
+
 $(function() {
   
   // Hot key
@@ -244,9 +284,12 @@ $(function() {
       let propertyName = e.target.getAttribute("data-property");
       pageAndComponent[pageFocus].background[propertyName] = e.target.value;
 
+      /*
       $("#sketch").css({
         background: `linear-gradient(180deg, ${pageAndComponent[pageFocus].background.main_color} 0%, ${pageAndComponent[pageFocus].background.grad_color} 100%)`,
       });
+      */
+      updateSketchBackground();
     });
   });
 
@@ -309,6 +352,9 @@ $(function() {
       }
     }
   });
+
+  grid_size = 100;
+  updateSketchBackground();
 
   $("#sketch").click();
 });

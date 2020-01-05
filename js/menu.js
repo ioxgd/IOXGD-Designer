@@ -30,9 +30,8 @@ const template = [
 
             OpenfilePath = result[0];
             
-            return fs.readFile(OpenfilePath, (err, data) => {
-              allPageFromJson(data);
-              apiBroadcast("page-data-update", data);
+            return loadProject(OpenfilePath, () => {
+              broadcastPageContent();
 
               $("#status").text(`Open file ${OpenfilePath} at ${(new Date()).toLocaleTimeString('th-TH')}`);
             });
@@ -57,9 +56,9 @@ const template = [
                 OpenfilePath = result.filePath;
             }
 
-            let json = allPageToJson();
-            apiBroadcast("page-data-update", json);
-            return fs.writeFile(OpenfilePath, json, () => {
+            broadcastPageContent();
+
+            return saveProject(OpenfilePath, () => {
                 $("#status").text(`Save file to ${OpenfilePath} at ${(new Date()).toLocaleTimeString('th-TH')}`);
             });
           }
@@ -69,6 +68,7 @@ const template = [
           accelerator: 'Ctrl+Shift+S',
           click: async () => {
             let result = await dialog.showSaveDialog({
+                defaultPath: typeof OpenfilePath !== "undefined" ? OpenfilePath : '',
                 filters: [{ 
                     name: 'GD', 
                     extensions: ['gd'] 
@@ -81,9 +81,9 @@ const template = [
 
             OpenfilePath = result.filePath;
 
-            let json = allPageToJson();
-            apiBroadcast("page-data-update", json);
-            return fs.writeFile(OpenfilePath, json, () => {
+            broadcastPageContent();
+
+            return saveProject(OpenfilePath, () => {
                 $("#status").text(`Save as to ${OpenfilePath} at ${(new Date()).toLocaleTimeString('th-TH')}`);
             });
           }
@@ -130,6 +130,32 @@ const template = [
         {
           label: 'Add Font',
           click: fontAddOpen
+        }
+      ]
+    },
+    {
+      label: 'Grid',
+      submenu: [
+        {
+          label: 'Show grid line',
+          id: 'show-grid',
+          type: 'checkbox',
+          accelerator: 'Ctrl+H',
+          click: () => {
+            show_grid = menu.getMenuItemById('show-grid').checked;
+            updateSketchBackground();
+          }
+        },
+        {
+          label: 'Grid size..',
+          click: () => {
+            dialogs.prompt("Enter new grid size", grid_size, (value) => {
+              if (!value) return;
+
+              grid_size = +value;
+              updateSketchBackground();
+            });
+          }
         }
       ]
     },

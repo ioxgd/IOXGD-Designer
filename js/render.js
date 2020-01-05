@@ -82,6 +82,78 @@ function allPageToJson() {
   }, null, '\t');
 }
 
+function saveProject(filepath, cb) {
+  let dataObject = {
+    font: {},
+    page: pageAndComponent
+  };
+
+  dataObject.font = JSON.parse(JSON.stringify(listFont)).map((font) => {
+    if (!font.variable) {
+      if (path.isAbsolute(font.file)) {
+        font.file = path.relative(path.dirname(filepath), font.file);
+      }
+    }
+    return font;
+  });
+
+  json = JSON.stringify(dataObject, null, '\t');
+  // console.log(json);
+
+  fs.writeFile(OpenfilePath, json, cb);
+}
+
+async function loadProject(file, cb) {
+  let json = await readFileAsync(file);
+  let parse = JSON.parse(json);
+  parse.font = parse.font.map((font) => {
+    if (!font.variable) {
+      if (!path.isAbsolute(font.file)) {
+        font.file = path.resolve(path.join(path.dirname(file), font.file));
+      }
+    }
+    return font;
+  });
+  // console.log(parse.font);
+  for (let inx in parse.font) {
+    let font = parse.font[inx];
+    if (font.variable) {
+      continue;
+    }
+    if (!fs.existsSync(font.file)) {
+      let result;
+      result = await dialog.showMessageBox({
+        type: 'error',
+        title: `${path.basename(font.file)} not found`,
+        message: `font ${path.basename(font.file)} not found, please select ${path.basename(font.file)} font.`
+      });
+
+      result = await dialog.showOpenDialog({
+        title: `Select file ${path.basename(font.file)}`,
+        properties: [ 'openFile' ],
+        filters: [
+          { name: 'Font', extensions: ['ttf'] }
+        ]
+      });
+
+      if (result.canceled) {
+        return;
+      }
+      
+      font.file = result.filePaths[0];
+    }
+  }
+  listFont = parse.font;
+  pageAndComponent = parse.page;
+
+  updateFontInArray();
+  rerenderComponent();
+  $("#sketch").click();
+  $(".property").change();
+
+  if (typeof cb === "function") cb();
+}
+
 function allPageFromJson(json) {
   let parse = JSON.parse(json);
   listFont = parse.font;

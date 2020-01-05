@@ -4,6 +4,7 @@
   "description": "",
   "main": "main.js",
   "dependencies": {
+    "dialogs": "^2.0.1",
     "electron": "^6.0.10",
     "md5-file": "^4.0.0"
   },
