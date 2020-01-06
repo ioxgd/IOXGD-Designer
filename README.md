@@ -4,7 +4,11 @@
 
 ## การติดตั้ง
 
-ปัจจุบันรองรับการติดตั้งจาก Source Code เท่านั้น โดยรันคำสั่งต่อไปนี้ใน Power Shell หรือ Command Line
+ติดตั้งด้วยไฟล์ช่วยติดตั้ง หรือใช้งานแบบไม่ต้องติดตั้ง
+
+ * ดาวน์โหลดไฟล์โปรแกรมได้เมนู [Releases](https://github.com/ioxgd/IOXGD-Designer/releases)
+
+การติดตั้งจาก Source Code ให้รันคำสั่งต่อไปนี้ใน Power Shell หรือ Command Line
 
 ```
 git clone https://github.com/ioxgd/IOXGD-Designer.git
