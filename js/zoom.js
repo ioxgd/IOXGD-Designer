@@ -36,14 +36,8 @@ $(function() {
         }
     });
 
-    $("section.space").hover(() => {
-        space_enter = true;
-    }, () => {
-        space_enter = false;
-    })
-
     $(window).on('wheel', function(event){
-        if (!space_enter) {
+        if (!ctrlDown) {
             return;
         }
 

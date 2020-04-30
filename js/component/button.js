@@ -164,7 +164,12 @@ addComponent({
     font: {
       label: "Font",
       type: "font"
-    }
+    },
+    handler: {
+      label: "Handler",
+      type: "text",
+      default: ""
+    },
   },
   render: {
     create: function(id) {
@@ -247,9 +252,12 @@ addComponent({
 
     // Button object
     header += `lv_obj_t* ${this.property.name};\n`;
+    if (this.property.handler.length > 0) {
+      header += `extern ${this.property.handler}(lv_obj_t*, lv_event_t);\n`;
+    }
     
     code += `${this.property.name} = lv_btn_create(lv_scr_act(), NULL);\n`;
-    code += `// lv_obj_set_event_cb(${this.property.name}, event_handler); // TODO\n`;
+    code += `${this.property.handler.length > 0 ? '' : '// '}lv_obj_set_event_cb(${this.property.name}, ${this.property.handler});\n`;
     code += `lv_btn_set_style(${this.property.name}, LV_BTN_STATE_REL, &${this.property.name}_rel_style);\n`;
     code += `lv_btn_set_style(${this.property.name}, LV_BTN_STATE_PR, &${this.property.name}_pr_style);\n`;
     code += `lv_obj_set_size(${this.property.name}, ${this.property.width}, ${this.property.height});\n`;

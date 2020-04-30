@@ -213,6 +213,8 @@ let updateSketchBackground = () => {
   svgSketch.style.background = `url(${canvas.toDataURL()})`;
 }
 
+var ctrlDown = false;
+
 $(function() {
   
   // Hot key
@@ -293,7 +295,7 @@ $(function() {
     });
   });
 
-  let ctrlDown = false;
+  
 
   $(document).keydown((e) => {
     if (e.keyCode === 17 || e.keyCode === 91) ctrlDown = true;
@@ -344,13 +346,13 @@ $(function() {
   $(document).keydown((e) => {
     if (ctrlDown && e.keyCode === 68) { // Ctrl+D (D is 68)
       duplicateComponent();
-    } else if (ctrlDown && e.keyCode === 67) { // Ctrl+C (C is 67)
+    } /*else if (ctrlDown && e.keyCode === 67) { // Ctrl+C (C is 67)
       copyID = $(".focus").attr("data-id");
     } else if (ctrlDown && e.keyCode === 86) { // Ctrl+V (C is 86)
       if (copyID !== "") {
         duplicateComponent(copyID);
       }
-    }
+    } */
   });
 
   grid_size = 100;
