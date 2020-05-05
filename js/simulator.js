@@ -7,7 +7,7 @@ let simulator_bulid = async () => {
     let fontCode = await buildFontSaveFileGetCode(simulator.fontdir, (msg) => {
         $("#status").text(msg);
     });
-    let code = await buildComponentsGetCode();
+    let code = await buildComponentsGetCode(true, simulator.fontdir);
 
     await simulator.writeCode(code.content, `${fontCode}\n${code.header}`);
 

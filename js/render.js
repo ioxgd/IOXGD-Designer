@@ -437,7 +437,10 @@ function updatePropertyTable() {
   });
 }
 
-async function buildComponentsGetCode() {
+async function buildComponentsGetCode(simulator, output_path) {
+  if (typeof simulator === "undefined") simulator = false;
+  if (typeof output_path === "undefined") output_path = false;
+
   var code = "";
   var header = "";
 
@@ -463,7 +466,7 @@ async function buildComponentsGetCode() {
       return;
     }
 
-    let compCode = await comp.build.bind(pageAndComponent[pageFocus].component[id])();
+    let compCode = await comp.build.bind(pageAndComponent[pageFocus].component[id])(simulator, pageFocus, output_path);
 
     code += `/* ========== ${pageAndComponent[pageFocus].component[id].property.name} ========== */\n`;
     code += typeof compCode === "object" ? compCode.content : compCode;

@@ -19,7 +19,7 @@ $(function() {
 
         let filePath = result.filePath;
 
-        let codeGen = await buildComponentsGetCode();
+        let codeGen = await buildComponentsGetCode(false, path.dirname(filePath));
         codeGen.content = codeGen.content.replace(/\n/g, "\n  ");
         codeGen.content = codeGen.content.trim();
 
