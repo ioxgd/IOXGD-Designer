@@ -229,13 +229,13 @@ $(function() {
       updateComponentFrame();
       
       $("#property-box").html("");
-    } else if (e.which === 38) { // Up
+    } else if ($(':focus').length === 0 && e.which === 38) { // Up
       $(".input-y-offset").val(parseInt($(".input-y-offset").val()) - 10).change();
-    } else if (e.which === 40) { // Down
+    } else if ($(':focus').length === 0 && e.which === 40) { // Down
       $(".input-y-offset").val(parseInt($(".input-y-offset").val()) + 10).change();
-    } else if (e.which === 37) { // Left
+    } else if ($(':focus').length === 0 && e.which === 37) { // Left
       $(".input-x-offset").val(parseInt($(".input-x-offset").val()) - 10).change();
-    } else if (e.which === 39) { // Right
+    } else if ($(':focus').length === 0 && e.which === 39) { // Right
       $(".input-x-offset").val(parseInt($(".input-x-offset").val()) + 10).change();
     }
   };
