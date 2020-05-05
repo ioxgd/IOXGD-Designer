@@ -281,7 +281,7 @@ addComponent({
       updatePos.bind(this)(element);
     },
   },
-  build: async function() {
+  build: async function(simulator) {
     let code = "";
     let header = "";
 
@@ -324,7 +324,7 @@ addComponent({
     code += "\n";
     
     header += `lv_obj_t* ${this.property.name};\n`;
-    if (this.property.handler.length > 0) {
+    if (this.property.handler.length > 0 && !simulator) {
       header += `extern ${this.property.handler}(lv_obj_t*, lv_event_t);\n`;
     }
 
@@ -334,7 +334,7 @@ addComponent({
     code += `lv_slider_set_style(${this.property.name}, LV_SLIDER_STYLE_KNOB, &${this.property.name}_knob_style);\n`;
     code += `lv_obj_set_size(${this.property.name}, ${this.property.width}, ${this.property.height});\n`;
     code += `lv_obj_align(${this.property.name}, NULL, ${propertyToAlign(this.property)}, ${this.property.x}, ${this.property.y});\n`;
-    code += `${this.property.handler.length > 0 ? '' : '// '}lv_obj_set_event_cb(${this.property.name}, ${this.property.handler});\n`;
+    code += `${this.property.handler.length > 0 && !simulator ? '' : '// '}lv_obj_set_event_cb(${this.property.name}, ${this.property.handler});\n`;
 
     code += "\n";
     code += `lv_slider_set_range(${this.property.name}, ${this.property.range_min}, ${this.property.range_max});\n`;

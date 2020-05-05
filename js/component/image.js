@@ -94,7 +94,22 @@ addComponent({
       label: "Src",
       type: "file",
       default: "./image/noimage.png"
-    }
+    },
+    storage: {
+      label: "Storage",
+      type: "choice",
+      choice: [
+        {
+          label: "Flash",
+          value: 0
+        },
+        {
+          label: "MicroSD Card",
+          value: 1
+        },
+      ],
+      default: 0
+    },
   },
   render: {
     create: function(id) {
@@ -122,26 +137,46 @@ addComponent({
       updatePos.bind(this)(element);
     },
   },
-  build: async function() {
+  build: async function(simulator, pagename, output_path) {
     let code = "";
     let header = "";
 
+    // let objName = `${pagename}_${this.property.name}`;
+    let objName = `${this.property.name}`;
+
     // Image object
-    header += `lv_obj_t* ${this.property.name};\n`;
-    
-    code += `${this.property.name} = lv_img_create(lv_scr_act(), NULL);\n`;
-    code += `// lv_img_set_src(${this.property.name}, "${this.property.src}"); // TODO\n`;
-    code += `lv_obj_align(${this.property.name}, NULL, ${propertyToAlign(this.property)}, ${this.property.x}, ${this.property.y});\n`;
+    if (this.property.define == 0) { // define local
+      code += `lv_obj_t* ${objName};\n`;
+      code += `\n`;
+    } else {
+      header += `lv_obj_t* ${objName};\n`;
+    }
+
+    code += `${objName} = lv_img_create(lv_scr_act(), NULL);\n`;
+    let imgObj = `img_${path.basename(this.property.src).replace(/\-/g,'_').split('.').slice(0, -1).join('_')}`;
+    if (this.property.storage == 0 || simulator) { // Flash or Simulator
+      header += `LV_IMG_DECLARE(${imgObj});\n`;
+      code += `lv_img_set_src(${objName}, &${imgObj});\n`;
+    } else if (this.property.storage == 1) { // MicroSD Card
+      code += `lv_img_set_src(${objName}, "S:/path/to/${path.basename(this.property.src)}"); // TODO\n`;
+    }
+    code += `lv_obj_align(${objName}, NULL, ${propertyToAlign(this.property)}, ${this.property.x}, ${this.property.y});\n`;
     code += `\n`;
 
-    code += `lv_obj_set_hidden(${this.property.name}, ${this.property.hidden === 0 ? 'true' : 'false'});`;
+    code += `lv_obj_set_hidden(${objName}, ${this.property.hidden === 0 ? 'true' : 'false'});`;
     code += `\n`;
 
+    /*
     if (this.property.define == 0) { // define local
       code = `${header}\n${code}`;
       header = "";
     }
-    
+    */
+
+    if (this.property.storage == 0 || simulator) { // Flash or Simulator -> Convart file
+      await img_covt(this.property.src, imgObj, output_path);
+    }
+
     return { header, content: code };
   }
 });
