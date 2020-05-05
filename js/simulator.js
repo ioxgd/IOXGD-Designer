@@ -25,7 +25,7 @@ let simulator_clean = async () => {
 
 let simulator_stop = () => {
     try {
-        execFileSync("taskkill", ["/IM", simulator.outputFile, "/F"]);
+        execFileSync("taskkill", ["/IM", path.basename(simulator.outputFile), "/F"]);
     } catch(err) {
 
     }

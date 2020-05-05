@@ -3,10 +3,9 @@ const path = require("path");
 const { exec, execFile } = require("child_process");
 const md5File = require('md5-file/promise')
 
-let projectDir = `${__dirname}\\pc_simulator_win_codeblocks`;
+let projectDir = `${__dirname}\\codegen`;
 let compilerDir = `${__dirname}\\MinGW\\bin`;
-let outputDir = `${__dirname}\\output`;
-let outputFile = "LittlevGL.exe";
+let outputFile = `${__dirname}\\LittlevGL.exe`;
 
 let compiler = {
   c: 'mingw32-gcc.exe',
@@ -19,9 +18,13 @@ let flag = {
 }
 
 let includeDir = [
-  `${__dirname}\\pc_simulator_win_codeblocks`,
-  `${__dirname}\\pc_simulator_win_codeblocks\\lvgl`
+  `${__dirname}\\include`,
+  `${__dirname}\\include\\lvgl`
 ];
+
+let staticLibrary = [
+  `${__dirname}\\lib\\libpc_simulator_win_codeblocks.a`,
+]
 
 let fileChackMD5 = { };
 
@@ -40,7 +43,12 @@ let clean = () => {
     }
   };
 
-  deleteFolderRecursive(outputDir);
+  deleteFolderRecursive(projectDir);
+
+  fs.unlinkSync(outputFile);
+
+  fs.mkdirSync(projectDir);
+  fs.writeFileSync(`${projectDir}/DUMMY`, '');
 }
 
 function execShellCommand(cmd) {
@@ -85,16 +93,10 @@ let compile = async function(log_cb, useOldFile) {
   outputFiles = [];
 
   for await (const file of listCodeFile) {
-    let outDir = path.dirname(file).replace(projectDir, outputDir);
     let fileName = path.basename(file);
 
-    // Check exist output dir
-    if (!fs.existsSync(outDir)) {
-      fs.mkdirSync(outDir, { recursive: true });
-    }
-
     if (file.endsWith(".c")) {
-      let outFile = `${outDir}/${fileName}.o`;
+      let outFile = `${file}.o`;
 
       if (useOldFile) {
         if (fs.existsSync(outFile)) {
@@ -113,6 +115,7 @@ let compile = async function(log_cb, useOldFile) {
       }
 
       let cmd = `"${compilerDir}/${compiler.c}" ${flag.c} ${includeDir.map(x => `-I "${x}"`).join(' ')} -c "${file}" -o "${outFile}"`;
+      // console.log(cmd);
       try {
         log_cb(`Compile ${fileName}`);
         const output = await execShellCommand(cmd);
@@ -130,8 +133,10 @@ let compile = async function(log_cb, useOldFile) {
   let arg = [];
   arg = arg.concat(flag.linker.split(' '));
   arg = arg.concat(outputFiles);
+  arg = arg.concat(staticLibrary);
   arg.push('-o');
-  arg.push(`${outputDir}/${outputFile}`);
+  arg.push(outputFile);
+  // console.log(arg.join(' '));
 
   log_cb(`Create ${outputFile}`);
   const output = await new Promise((resolve, reject) => {
@@ -149,7 +154,7 @@ let compile = async function(log_cb, useOldFile) {
 }
 
 let run = function() {
-  return exec(`"${outputDir}/${outputFile}"`);
+  return exec(outputFile);
 }
 
 let writeCode = async function(code, header) {
@@ -157,11 +162,11 @@ let writeCode = async function(code, header) {
 
   code = `#include "lvgl/lvgl.h"\n${header}\nvoid codeSimulator() {\n${code}\n}\n`;
 
-  fs.writeFileSync(`${projectDir}/codegen/codeSimulator.c`, code);
+  fs.writeFileSync(`${projectDir}/codeSimulator.c`, code);
 }
 
 module.exports = {
-  fontdir: `${projectDir}/codegen`,
+  fontdir: `${projectDir}`,
   writeCode,
   clean,
   compile,

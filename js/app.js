@@ -358,5 +358,7 @@ $(function() {
   grid_size = 100;
   updateSketchBackground();
 
+  simulator_clean();
+
   $("#sketch").click();
 });
