@@ -123,9 +123,11 @@ function updateFontList() {
     });
 }
 
-function updateFontInArray() {
-    for (font of listFont) {
-        document.fonts.add(new FontFace(font.name, `url('${font.file.replace(/\\/g, '\\\\')}')`));
+async function updateFontInArray() {
+    for (let font of listFont) {
+        let f = new FontFace(font.name, `url('${font.file.replace(/\\/g, '\\\\')}')`);
+        await f.load();
+        document.fonts.add(f);
     }
 }
 

@@ -3,7 +3,7 @@ function updateComponentFrame() {
   let n = $(".focus").length;
   if (n >= 1) {
     let x=0, y=0, width=0, height=0;
-    let focus = $(".focus")[0];
+    let focus = $(".focus")[n - 1];
     // let offset = $("#sketch").offset();
     let id = focus.getAttribute("data-id");
     let name = pageAndComponent[pageFocus].component[id].name;
@@ -87,11 +87,11 @@ function reconfigDraggable() {
     // bring target to front
     $(".focus").removeClass("focus");
     // $(event.target.parentElement).append(event.target)
-    // console.log(event.target.classList.contains("component"));
+    // console.log(event.target);
     if (event.target.classList.contains("component")) {
       $(event.target).addClass("focus");
     } else {
-      $(event.target).parents(".component").addClass("focus");
+      $(event.target).parent(".component").addClass("focus");
     }
       
     updateComponentFrame();

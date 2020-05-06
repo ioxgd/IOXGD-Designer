@@ -206,7 +206,8 @@ addComponent({
         "text-align": alignList[this.property.text_align],
         color: this.property.color,
         "font-family": font.name,
-        "font-size": `${font.size}px`
+        "font-size": `${font.size}px`,
+        position: 'absolute',
       });
 
       updatePos.bind(this)(element);
@@ -243,7 +244,7 @@ addComponent({
     // Label object
     header += `lv_obj_t* ${this.property.name};\n`;
 
-    code += `${this.property.name} = lv_label_create(lv_scr_act(), NULL);\n`;
+    code += `${this.property.name} = lv_label_create(${!this.property.parent ? 'lv_scr_act()' : this.property.parent}, NULL);\n`;
     code += `lv_label_set_style(${this.property.name}, LV_LABEL_STYLE_MAIN, &${this.property.name}_style);\n`;
     code += `lv_label_set_long_mode(${this.property.name}, ${long_mode_list[this.property.mode]});\n`;
     code += `lv_label_set_align(${this.property.name}, ${text_align_list[this.property.text_align]});\n`;

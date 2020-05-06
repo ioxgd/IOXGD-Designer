@@ -149,7 +149,7 @@ async function loadProject(file, cb) {
   listFont = parse.font;
   pageAndComponent = parse.page;
 
-  updateFontInArray();
+  await updateFontInArray();
   rerenderComponent();
   $("#sketch").click();
   $(".property").change();
@@ -218,6 +218,7 @@ async function rerenderComponent() {
     if (element.nodeName == 'IMG') {
       element.onload = () => {
         comp.render.update.bind(pageAndComponent[pageFocus].component[id])(element);
+        element.onload = null;
       }
     }
 
@@ -280,7 +281,7 @@ function getAbstractComponent() {
 }
 
 function updatePropertyTable() {
-  let focus = $(".focus")[0];
+  let focus = $(".focus").last()[0];
   let id = focus.getAttribute("data-id");
   let name = pageAndComponent[pageFocus].component[id].name;
   
