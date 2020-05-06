@@ -10,6 +10,10 @@ addComponent({
           return objectNameGen("obj");
         }
       },
+      parent: {
+        label: "Parent",
+        type: "parent"
+      },
       hidden: {
         label: "Hidden",
         type: "choice",
@@ -188,12 +192,14 @@ addComponent({
           border: `${this.property.border_width}px solid ${hexToRgbA(this.property.border_color, this.property.border_opacity / 255)}`,
           "border-radius": `${this.property.radius}px`,
           "box-shadow": `0 ${this.property.shadow_type == 0 ? this.property.shadow_width : 0}px ${this.property.shadow_width}px ${this.property.shadow_color}`,
+          overflow: 'hidden',
+          position: 'absolute',
         });
   
         updatePos.bind(this)(element);
       },
     },
-    build: async function() {
+    build: async function(simulator, pagename, output_path) {
       let header = "";
       let code = "";
 
@@ -215,7 +221,7 @@ addComponent({
       // Button object
       header += `lv_obj_t* ${this.property.name};\n`;
 
-      code += `${this.property.name} = lv_obj_create(lv_scr_act(), NULL);\n`;
+      code += `${this.property.name} = lv_obj_create(${!this.property.parent ? 'lv_scr_act()' : this.property.parent}, NULL);\n`;
       code += `lv_obj_set_style(${this.property.name}, &${this.property.name}_style);\n`;
       code += `lv_obj_set_size(${this.property.name}, ${this.property.width}, ${this.property.height});\n`;
       code += `lv_obj_align(${this.property.name}, NULL, ${propertyToAlign(this.property)}, ${this.property.x}, ${this.property.y});\n`;

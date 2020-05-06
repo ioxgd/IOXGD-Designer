@@ -51,6 +51,8 @@ function createComponent(name) {
       if (typeof property.default === "undefined") {
         if (property.type === "font") {
           propertyValue = listFont[0].name;
+        } else if (property.type === "parent") {
+          propertyValue = "";
         }
       } else if (typeof property.default === "function") {
         propertyValue = property.default();
@@ -70,6 +72,7 @@ function createComponent(name) {
   element.setAttribute("class", "component");
   comp.render.update.bind(pageAndComponent[pageFocus].component[id])(element);
   
+
   svgSketch.appendChild(element);
   
   reconfigDraggable();
@@ -179,6 +182,11 @@ async function rerenderComponent() {
   // $(svgSketch).find(".component").remove();
   removeAllComponent();
 
+  let nameToId = [];
+  for (let ObjName of Object.keys(pageAndComponent[pageFocus].component)) {
+    nameToId[pageAndComponent[pageFocus].component[ObjName].property.name] = ObjName;
+  }
+
   let arrNumber = [];
   for (let id in pageAndComponent[pageFocus].component) {
     let name = pageAndComponent[pageFocus].component[id].name;
@@ -201,7 +209,11 @@ async function rerenderComponent() {
     element.setAttribute("data-id", id);
     element.setAttribute("class", "component");
 
-    svgSketch.appendChild(element);
+    if (!pageAndComponent[pageFocus].component[id].property.parent) {
+      svgSketch.appendChild(element);
+    } else {
+      $(svgSketch).find(`[data-id='${nameToId[pageAndComponent[pageFocus].component[id].property.parent]}']`)[0].appendChild(element);
+    }
 
     if (element.nodeName == 'IMG') {
       element.onload = () => {
@@ -315,8 +327,14 @@ function updatePropertyTable() {
           html += "<option value=\"" + item.name + "\"" + (item.name === pageAndComponent[pageFocus].component[id].property[propertyName] ? " selected" : "") + ">" + item.name + "</option>";
         }
         html += "</select>";
-
-        
+      } else if (property.type === "parent") {
+        html += "<select class=\"property\" data-property=\"" + propertyName + "\">";
+        html += `<option value="">N/A</option>`;
+        for (let item of Object.values(pageAndComponent[pageFocus].component).filter((item) => item.name === "Object")) {
+          if (item.property.name === pageAndComponent[pageFocus].component[id].property.name) continue; // ?
+          html += `<option value="${item.property.name}"${item.property.name === pageAndComponent[pageFocus].component[id].property[propertyName] ? ' selected' : ''}>${item.property.name}</option>`;
+        }
+        html += "</select>";
       }
       
       html += "</div>";
@@ -418,6 +436,26 @@ function updatePropertyTable() {
       pageAndComponent[pageFocus].component[id].property[propertyName] = propertyValue;
     } else if (property.type === "font") {
       pageAndComponent[pageFocus].component[id].property[propertyName] = propertyValue;
+    } else if (property.type === "parent") {
+      let newParent = false;
+      if (propertyValue === "") {
+        newParent = svgSketch;
+      } else {
+        for (let objId of Object.keys(pageAndComponent[pageFocus].component)) {
+          if (pageAndComponent[pageFocus].component[objId].property.name === propertyValue) {
+            newParent = $(svgSketch).find(`[data-id='${objId}'`)[0];
+            break;
+          }
+        }
+      }
+      if (newParent) {
+        try {
+          newParent.appendChild(focus);
+          pageAndComponent[pageFocus].component[id].property[propertyName] = propertyValue;
+        } catch (msg) {
+          alert("Error, loop parent");
+        }
+      }
     }
     
     if (typeof property.change === "function") {
@@ -466,7 +504,7 @@ async function buildComponentsGetCode(simulator, output_path) {
       return;
     }
 
-    let compCode = await comp.build.bind(pageAndComponent[pageFocus].component[id])(simulator, pageFocus, output_path);
+    let compCode = await comp.build.bind(pageAndComponent[pageFocus].component[id])(simulator, pageAndComponent[pageFocus].name, output_path);
 
     code += `/* ========== ${pageAndComponent[pageFocus].component[id].property.name} ========== */\n`;
     code += typeof compCode === "object" ? compCode.content : compCode;

@@ -10,6 +10,10 @@ addComponent({
         return objectNameGen("img");
       }
     },
+    parent: {
+      label: "Parent",
+      type: "parent"
+    },
     hidden: {
       label: "Hidden",
       type: "choice",
@@ -132,6 +136,9 @@ addComponent({
       return [];
     },
     update: function(element) {
+      $(element).css({ 
+        position: 'absolute',
+      });
       $(element).attr("src", this.property.src)
 
       updatePos.bind(this)(element);
@@ -152,7 +159,7 @@ addComponent({
       header += `lv_obj_t* ${objName};\n`;
     }
 
-    code += `${objName} = lv_img_create(lv_scr_act(), NULL);\n`;
+    code += `${objName} = lv_img_create(${!this.property.parent ? 'lv_scr_act()' : this.property.parent}, NULL);\n`;
     let imgObj = `img_${path.basename(this.property.src).replace(/\-/g,'_').split('.').slice(0, -1).join('_')}`;
     if (this.property.storage == 0 || simulator) { // Flash or Simulator
       header += `LV_IMG_DECLARE(${imgObj});\n`;

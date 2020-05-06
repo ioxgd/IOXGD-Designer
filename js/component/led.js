@@ -15,6 +15,10 @@ addComponent({
         return objectNameGen("led");
       }
     },
+    parent: {
+      label: "Parent",
+      type: "parent"
+    },
     hidden: {
       label: "Hidden",
       type: "choice",
@@ -176,14 +180,17 @@ addComponent({
         border: `${this.property.border_width}px solid ${hexToRgbA(this.property.border_color, this.property.border_opacity / 255)}`,
         "border-radius": `100%`,
         "box-shadow": `0 0 ${this.property.shadow_width}px ${this.property.shadow_color}`,
+        position: 'absolute',
       });
 
       updatePos.bind(this)(element);
     },
   },
-  build: async function() {
+  build: async function(simulator, pagename, output_path) {
     let code = "";
     let header = "";
+
+    console.log(this);
 
     // Style
     header += `static lv_style_t ${this.property.name}_style;\n`;
@@ -202,7 +209,7 @@ addComponent({
     // LED object
     header += `lv_obj_t* ${this.property.name};\n`;
 
-    code += `${this.property.name} = lv_led_create(lv_scr_act(), NULL);\n`;
+    code += `${this.property.name} = lv_led_create(${!this.property.parent ? 'lv_scr_act()' : this.property.parent}, NULL);\n`;
     code += `lv_obj_set_style(${this.property.name}, &${this.property.name}_style);\n`;
     code += `lv_obj_set_size(${this.property.name}, ${this.property.width}, ${this.property.height});\n`;
     code += `lv_obj_align(${this.property.name}, NULL, ${propertyToAlign(this.property)}, ${this.property.x}, ${this.property.y});\n`;

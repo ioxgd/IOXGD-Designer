@@ -10,6 +10,10 @@ addComponent({
         return objectNameGen("sw");
       }
     },
+    parent: {
+      label: "Parent",
+      type: "parent"
+    },
     hidden: {
       label: "Hidden",
       type: "choice",
@@ -253,6 +257,7 @@ addComponent({
         height: this.property.height == 0 ? "auto" : this.property.height,
 /*         "padding-top": `${this.property.padding}px`,
         "padding-bottom": `${this.property.padding}px`, */
+        position: 'absolute',
       });
 
       $(element).find(".bg").css({
@@ -276,7 +281,7 @@ addComponent({
       updatePos.bind(this)(element);
     },
   },
-  build: async function(simulator) {
+  build: async function(simulator, pagename, output_path) {
     let code = "";
     let header = "";
 
@@ -338,7 +343,7 @@ addComponent({
       header += `extern ${this.property.handler}(lv_obj_t*, lv_event_t);\n`;
     }
 
-    code += `${this.property.name} = lv_sw_create(lv_scr_act(), NULL);\n`;
+    code += `${this.property.name} = lv_sw_create(${!this.property.parent ? 'lv_scr_act()' : this.property.parent}, NULL);\n`;
     code += `lv_sw_set_style(${this.property.name}, LV_SW_STYLE_BG, &${this.property.name}_bg_style);\n`;
     code += `lv_sw_set_style(${this.property.name}, LV_SW_STYLE_INDIC, &${this.property.name}_indic_style);\n`;
     code += `lv_sw_set_style(${this.property.name}, LV_SW_STYLE_KNOB_ON, &${this.property.name}_knob_on_style);\n`;

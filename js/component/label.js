@@ -10,6 +10,10 @@ addComponent({
         return objectNameGen("txt");
       }
     },
+    parent: {
+      label: "Parent",
+      type: "parent"
+    },
     hidden: {
       label: "Hidden",
       type: "choice",
@@ -208,7 +212,7 @@ addComponent({
       updatePos.bind(this)(element);
     },
   },
-  build: async function() {
+  build: async function(simulator, pagename, output_path) {
     let long_mode_list = [
       'LV_LABEL_LONG_EXPAND',
       'LV_LABEL_LONG_BREAK',

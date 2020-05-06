@@ -10,6 +10,10 @@ addComponent({
         return objectNameGen("btn");
       }
     },
+    parent: {
+      label: "Parent",
+      type: "parent"
+    },
     hidden: {
       label: "Hidden",
       type: "choice",
@@ -216,13 +220,14 @@ addComponent({
         border: `${this.property.border_width}px solid ${this.property.border_color}`,
         "border-radius": `${this.property.radius}px`,
         "font-family": font.name,
-        "font-size": `${font.size}px`
+        "font-size": `${font.size}px`,
+        position: 'absolute',
       });
 
       updatePos.bind(this)(element);
     },
   },
-  build: async function(simulator) {
+  build: async function(simulator, pagename, output_path) {
     let font = getFontFromName(this.property.font);
 
     let code = "";
@@ -256,7 +261,7 @@ addComponent({
       header += `extern ${this.property.handler}(lv_obj_t*, lv_event_t);\n`;
     }
     
-    code += `${this.property.name} = lv_btn_create(lv_scr_act(), NULL);\n`;
+    code += `${this.property.name} = lv_btn_create(${!this.property.parent ? 'lv_scr_act()' : this.property.parent}, NULL);\n`;
     code += `${this.property.handler.length > 0 && !simulator ? '' : '// '}lv_obj_set_event_cb(${this.property.name}, ${this.property.handler});\n`;
     code += `lv_btn_set_style(${this.property.name}, LV_BTN_STATE_REL, &${this.property.name}_rel_style);\n`;
     code += `lv_btn_set_style(${this.property.name}, LV_BTN_STATE_PR, &${this.property.name}_pr_style);\n`;

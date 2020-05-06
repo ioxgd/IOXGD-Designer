@@ -43,12 +43,29 @@ let clean = () => {
     }
   };
 
-  deleteFolderRecursive(projectDir);
+  try {
+    deleteFolderRecursive(projectDir);
+  } catch (msg) {
+    console.log(msg);
+  }
+  
+  try {
+    fs.unlinkSync(outputFile);
+  } catch (msg) {
+    console.log(msg);
+  }
 
-  fs.unlinkSync(outputFile);
+  try {
+    fs.mkdirSync(projectDir);
+  } catch (msg) {
+    console.log(msg);
+  }
 
-  fs.mkdirSync(projectDir);
-  fs.writeFileSync(`${projectDir}/DUMMY`, '');
+  try {
+    fs.writeFileSync(`${projectDir}/DUMMY`, '');
+  } catch (msg) {
+    console.log(msg);
+  }
 }
 
 function execShellCommand(cmd) {

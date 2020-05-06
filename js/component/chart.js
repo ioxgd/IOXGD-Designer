@@ -10,6 +10,10 @@ addComponent({
         return objectNameGen("chart");
       }
     },
+    parent: {
+      label: "Parent",
+      type: "parent"
+    },
     hidden: {
       label: "Hidden",
       type: "choice",
@@ -193,6 +197,7 @@ addComponent({
           height: "0px",
           border: 'none',
           'border-top': `${this.property.line_width}px solid ${this.property.line_color}`,
+          position: 'absolute',
         });
         element.appendChild(line);
       }
@@ -223,7 +228,7 @@ addComponent({
       updatePos.bind(this)(element);
     },
   },
-  build: async function() {
+  build: async function(simulator, pagename, output_path) {
     let code = "";
     let header = "";
 
@@ -243,7 +248,7 @@ addComponent({
     // Button object
     header += `lv_obj_t* ${this.property.name};\n`;
 
-    code += `${this.property.name} = lv_chart_create(lv_scr_act(), NULL);\n`;
+    code += `${this.property.name} = lv_chart_create(${!this.property.parent ? 'lv_scr_act()' : this.property.parent}, NULL);\n`;
     code += `lv_chart_set_style(${this.property.name}, LV_CHART_STYLE_MAIN, &${this.property.name}_style);\n`;
     code += `lv_obj_set_size(${this.property.name}, ${this.property.width}, ${this.property.height});\n`;
     code += `lv_obj_align(${this.property.name}, NULL, ${propertyToAlign(this.property)}, ${this.property.x}, ${this.property.y});\n`;

@@ -22,7 +22,7 @@ function updateComponentFrame() {
     }
 
     let move = comp.render.frame.bind(pageAndComponent[pageFocus].component[id])();
-    if (move.length == 4) {
+    if (move.length === 4) {
       x = move[0];
       y = move[1];
       width = move[2];
@@ -37,6 +37,26 @@ function updateComponentFrame() {
       y = focus.offsetTop;
       width = focus.offsetWidth;
       height = focus.offsetHeight;
+    }
+
+    if (typeof pageAndComponent[pageFocus].component[id].property.parent !== "undefined") {
+      if (pageAndComponent[pageFocus].component[id].property.parent !== "") {
+        let parentName = pageAndComponent[pageFocus].component[id].property.parent;
+        let nameToId = [];
+        for (let ObjName of Object.keys(pageAndComponent[pageFocus].component)) {
+          nameToId[pageAndComponent[pageFocus].component[ObjName].property.name] = ObjName;
+        }
+        while(1) { // loop find last parent
+          let parentId = nameToId[parentName];
+          let parent = $(svgSketch).find(`[data-id='${parentId}']`)[0];
+          x += parent.offsetLeft;
+          y += parent.offsetTop;
+          parentName = pageAndComponent[pageFocus].component[parentId].property.parent || "";
+          if (parentName === "") {
+            break;
+          }
+        }
+      }
     }
 
     // Top
@@ -332,7 +352,16 @@ $(function() {
     element.setAttribute("data-id", newID);
     element.setAttribute("class", "component");
 
-    svgSketch.appendChild(element);
+    if (!pageAndComponent[pageFocus].component[newID].property.parent) {
+      svgSketch.appendChild(element);
+    } else {
+      let nameToId = [];
+      for (let ObjName of Object.keys(pageAndComponent[pageFocus].component)) {
+        nameToId[pageAndComponent[pageFocus].component[ObjName].property.name] = ObjName;
+      }
+
+      $(svgSketch).find(`[data-id='${nameToId[pageAndComponent[pageFocus].component[newID].property.parent]}']`)[0].appendChild(element);
+    }
 
     comp.render.update.bind(pageAndComponent[pageFocus].component[newID])(element);
     
