@@ -1,3 +1,4 @@
 node_modules
 simulator/codegen/*.c
+simulator/codegen/*.o
 simulator/LittlevGL.exe
