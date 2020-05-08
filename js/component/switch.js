@@ -352,10 +352,8 @@ addComponent({
     code += `lv_obj_align(${this.property.name}, NULL, ${propertyToAlign(this.property)}, ${this.property.x}, ${this.property.y});\n`;
     code += `${this.property.handler.length > 0 && !simulator ? '' : '// '}lv_obj_set_event_cb(${this.property.name}, ${this.property.handler});\n`;
 
-    if (this.property.value) {
-      code += "\n";
-      code += `lv_sw_on(${this.property.name}, LV_ANIM_OFF);\n`;
-    }
+    code += "\n";
+    code += `lv_sw_${this.property.value ? 'on' : 'off'}(${this.property.name}, LV_ANIM_OFF);\n`;
     code += `\n`;
 
     code += `lv_obj_set_hidden(${this.property.name}, ${this.property.hidden === 0 ? 'true' : 'false'});`;
