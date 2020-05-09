@@ -258,7 +258,7 @@ addComponent({
     // Button object
     header += `lv_obj_t* ${this.property.name};\n`;
     if (this.property.handler.length > 0 && !simulator) {
-      header += `extern ${this.property.handler}(lv_obj_t*, lv_event_t);\n`;
+      header += `extern void ${this.property.handler}(lv_obj_t*, lv_event_t);\n`;
     }
     
     code += `${this.property.name} = lv_btn_create(${!this.property.parent ? 'lv_scr_act()' : this.property.parent}, NULL);\n`;
