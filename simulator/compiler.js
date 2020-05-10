@@ -171,7 +171,7 @@ let compile = async function(log_cb, useOldFile) {
 }
 
 let run = function() {
-  return exec(outputFile);
+  return execFile(outputFile);
 }
 
 let writeCode = async function(code, header) {
