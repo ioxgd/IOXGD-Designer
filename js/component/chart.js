@@ -167,7 +167,11 @@ addComponent({
   },
   render: {
     create: function(id) {
-      return document.createElement("div");
+      let element = document.createElement("div");
+      $(element).css({
+        position: "absolute", 
+      });
+      return element;
     },
     /* move: function(x, y, width, height) {
       this.property.x = x + 1; // Fix offset bug
