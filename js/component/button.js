@@ -267,6 +267,7 @@ addComponent({
     code += `lv_btn_set_style(${this.property.name}, LV_BTN_STATE_PR, &${this.property.name}_pr_style);\n`;
     code += `lv_obj_set_size(${this.property.name}, ${this.property.width}, ${this.property.height});\n`;
     code += `lv_obj_align(${this.property.name}, NULL, ${propertyToAlign(this.property)}, ${this.property.x}, ${this.property.y});\n`;
+    code += `lv_btn_set_toggle(${this.property.name}, ${this.property.toggle == 1 ? 'true' : 'false'});\n`;
     code += `\n`;
 
     // Label object
