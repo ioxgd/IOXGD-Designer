@@ -11,7 +11,8 @@ var pageAndComponent = [
     name: 'index',
     background: {
       main_color: "#FFFFFF",
-      grad_color: "#FFFFFF"
+      grad_color: "#FFFFFF",
+      grad_dir: "0"
     },
     component: {
 
@@ -483,9 +484,11 @@ async function buildComponentsGetCode(simulator, output_path) {
   var code = "";
   var header = "";
 
+  let indexGradDir2Var = [ 'LV_GRAD_DIR_NONE', 'LV_GRAD_DIR_HOR', 'LV_GRAD_DIR_VER' ];
+
   code += `lv_obj_set_style_local_bg_color(lv_scr_act(), LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, lv_color_hex(0x${pageAndComponent[pageFocus].background.main_color.substring(1)}));\n`;
   code += `lv_obj_set_style_local_bg_grad_color(lv_scr_act(), LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, lv_color_hex(0x${pageAndComponent[pageFocus].background.grad_color.substring(1)}));\n`;
-  code += `lv_obj_set_style_local_bg_grad_dir(lv_scr_act(), LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_GRAD_DIR_VER);\n`;
+  code += `lv_obj_set_style_local_bg_grad_dir(lv_scr_act(), LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, ${indexGradDir2Var[+pageAndComponent[pageFocus].background.grad_dir]});\n`;
   code += "\n";
   
   for (const id of Object.keys(pageAndComponent[pageFocus].component)) {

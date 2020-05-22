@@ -201,11 +201,20 @@ let updateSketchBackground = () => {
   canvas.width = 800;
   canvas.height = 480;
   let ctx = canvas.getContext("2d");
-
-  let gradient = ctx.createLinearGradient(0, 0, 0, 480);
-  gradient.addColorStop(0, pageAndComponent[pageFocus].background.main_color);
-  gradient.addColorStop(1, pageAndComponent[pageFocus].background.grad_color);
-  ctx.fillStyle = gradient;
+  
+  if (+pageAndComponent[pageFocus].background.grad_dir === 0) {
+    ctx.fillStyle = pageAndComponent[pageFocus].background.main_color;
+  } else {
+    let gradient;
+    if (+pageAndComponent[pageFocus].background.grad_dir === 1) {
+      gradient = ctx.createLinearGradient(0, 0, 800, 0);
+    } else if (+pageAndComponent[pageFocus].background.grad_dir === 2) {
+      gradient = ctx.createLinearGradient(0, 0, 0, 480);
+    }
+    gradient.addColorStop(0, pageAndComponent[pageFocus].background.main_color);
+    gradient.addColorStop(1, pageAndComponent[pageFocus].background.grad_color);
+    ctx.fillStyle = gradient;
+  }
 
   ctx.fillRect(0, 0, 800, 480);
 
@@ -293,6 +302,16 @@ $(function() {
     code += `<li>`;
     code += `<div class="label">Gradient color</div>`;
     code += `<div class="value"><input type="text" class="input-color property" data-property="grad_color" value="${pageAndComponent[pageFocus].background.grad_color}"></div>`;
+    code += `</li>`;
+    code += `<li>`;
+    code += `<div class="label">Gradient direction</div>`;
+    code += `<div class="value">`;
+    code += `<select class="property" data-property="grad_dir">`;
+    code += `<option value="0"${+pageAndComponent[pageFocus].background.grad_dir === 0 ? ' selected' : ''}>None</option>`;
+    code += `<option value="1"${+pageAndComponent[pageFocus].background.grad_dir === 1 ? ' selected' : ''}>Horizontal</option>`;
+    code += `<option value="2"${+pageAndComponent[pageFocus].background.grad_dir === 2 ? ' selected' : ''}>Vertical</option>`;
+    code += `</select>`;
+    code += `</div>`;
     code += `</li>`;
     $("#property-box").html(code);
 
