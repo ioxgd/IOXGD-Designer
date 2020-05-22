@@ -483,11 +483,9 @@ async function buildComponentsGetCode(simulator, output_path) {
   var code = "";
   var header = "";
 
-  code += "static lv_style_t style_screen;\n";
-  code += "lv_style_copy(&style_screen, &lv_style_plain);\n";
-  code += `style_screen.body.main_color = lv_color_hex(0x${pageAndComponent[pageFocus].background.main_color.substring(1)});\n`;
-  code += `style_screen.body.grad_color = lv_color_hex(0x${pageAndComponent[pageFocus].background.grad_color.substring(1)});\n`;
-  code += "lv_obj_set_style(lv_scr_act(), &style_screen);\n"
+  code += `lv_obj_set_style_local_bg_color(lv_scr_act(), LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, lv_color_hex(0x${pageAndComponent[pageFocus].background.main_color.substring(1)}));\n`;
+  code += `lv_obj_set_style_local_bg_grad_color(lv_scr_act(), LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, lv_color_hex(0x${pageAndComponent[pageFocus].background.grad_color.substring(1)}));\n`;
+  code += `lv_obj_set_style_local_bg_grad_dir(lv_scr_act(), LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_GRAD_DIR_VER);\n`;
   code += "\n";
   
   for (const id of Object.keys(pageAndComponent[pageFocus].component)) {

@@ -23,7 +23,7 @@ let includeDir = [
 ];
 
 let staticLibrary = [
-  `${__dirname}\\lib\\libpc_simulator_win_codeblocks.a`,
+  `${__dirname}\\lib\\liblvgl_v7.a`,
 ]
 
 let fileChackMD5 = { };

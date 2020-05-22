@@ -13,11 +13,7 @@ extern "C" {
 /*********************
  *      INCLUDES
  *********************/
-#ifdef LV_CONF_INCLUDE_SIMPLE
-#include "lv_conf.h"
-#else
-#include "../../../lv_conf.h"
-#endif
+#include "../lv_conf_internal.h"
 
 #if LV_USE_FILESYSTEM
 
@@ -29,12 +25,14 @@ extern "C" {
  *      DEFINES
  *********************/
 #define LV_FS_MAX_FN_LENGTH 64
+#define LV_FS_MAX_PATH_LENGTH 256
 
 /**********************
  *      TYPEDEFS
  **********************/
+
 /**
- * Errors in the filesystem module.
+ * Errors in the file system module.
  */
 enum {
     LV_FS_RES_OK = 0,
@@ -62,8 +60,7 @@ enum {
 };
 typedef uint8_t lv_fs_mode_t;
 
-typedef struct _lv_fs_drv_t
-{
+typedef struct _lv_fs_drv_t {
     char letter;
     uint16_t file_size;
     uint16_t rddir_size;
@@ -90,14 +87,12 @@ typedef struct _lv_fs_drv_t
 #endif
 } lv_fs_drv_t;
 
-typedef struct
-{
+typedef struct {
     void * file_d;
     lv_fs_drv_t * drv;
 } lv_fs_file_t;
 
-typedef struct
-{
+typedef struct {
     void * dir_d;
     lv_fs_drv_t * drv;
 } lv_fs_dir_t;
@@ -109,7 +104,7 @@ typedef struct
 /**
  * Initialize the File system interface
  */
-void lv_fs_init(void);
+void _lv_fs_init(void);
 
 /**
  * Initialize a file system driver with default values.
