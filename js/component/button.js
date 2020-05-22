@@ -135,6 +135,25 @@ addComponent({
       type: "color",
       default: "#193A5D"
     },
+    pr_grad_dir: {
+      label: "Release Gradient direction",
+      type: "choice",
+      choice: [
+        {
+          label: "None",
+          value: 0
+        },
+        {
+          label: "Horizontal",
+          value: 1
+        },
+        {
+          label: "Vertical",
+          value: 2
+        },
+      ],
+      default: 0
+    },
     pr_main_color: {
       label: "Press Main color",
       type: "color",
@@ -144,6 +163,25 @@ addComponent({
       label: "Press Gradient color",
       type: "color",
       default: "#10263C"
+    },
+    pr_grad_dir: {
+      label: "Press Gradient direction",
+      type: "choice",
+      choice: [
+        {
+          label: "None",
+          value: 0
+        },
+        {
+          label: "Horizontal",
+          value: 1
+        },
+        {
+          label: "Vertical",
+          value: 2
+        },
+      ],
+      default: 0
     },
     border_width: {
       label: "Border Width",
