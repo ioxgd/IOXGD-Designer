@@ -97,92 +97,153 @@ addComponent({
     width: {
       label: "Width",
       type: "number",
-      default: 160
+      default: 250
     },
     height: {
       label: "Height",
       type: "number",
-      default: 40
+      default: 20
     },
     background_main_color: {
       label: "Background Main color",
       type: "color",
-      default: "#FFFFFF"
+      default: "#EEEEEE"
     },
     background_grad_color: {
       label: "Background Gradient color",
       type: "color",
-      default: "#C0C0C0"
+      default: "#FFFFFF"
+    },
+    background_grad_dir: {
+      label: "Gradient direction",
+      type: "choice",
+      choice: [
+        {
+          label: "None",
+          value: 0
+        },
+        {
+          label: "Horizontal",
+          value: 1
+        },
+        {
+          label: "Vertical",
+          value: 2
+        },
+      ],
+      default: 0
     },
     background_border_width: {
       label: "Background Border Width",
       type: "number",
-      default: 2
+      default: 0
     },
     background_border_color: {
       label: "Background Border Color",
       type: "color",
-      default: "#404040"
+      default: "#FFFFFF"
     },
     background_radius: {
       label: "Background Radius",
       type: "number",
-      default: 6
+      default: 20
     },
+    /*
     background_padding: {
       label: "Background Padding",
       type: "number",
       default: 6
     },
+    */
     indicator_main_color: {
       label: "Indicator Main color",
       type: "color",
-      default: "#6b9ac7"
+      default: "#FF0000"
     },
     indicator_grad_color: {
       label: "Indicator Gradient color",
       type: "color",
-      default: "#2b598b"
+      default: "#FFFFFF"
+    },
+    indicator_grad_dir: {
+      label: "Gradient direction",
+      type: "choice",
+      choice: [
+        {
+          label: "None",
+          value: 0
+        },
+        {
+          label: "Horizontal",
+          value: 1
+        },
+        {
+          label: "Vertical",
+          value: 2
+        },
+      ],
+      default: 0
     },
     indicator_border_width: {
       label: "Indicator Border Width",
       type: "number",
-      default: 2
+      default: 0
     },
     indicator_border_color: {
       label: "Indicator Border Color",
       type: "color",
-      default: "#152c42"
+      default: "#FFFFFF"
     },
+    /*
     indicator_radius: {
       label: "Indicator Radius",
       type: "number",
-      default: 6
+      default: 20
     },
     indicator_padding: {
       label: "Indicator Padding",
       type: "number",
       default: 6
     },
+    */
     knob_main_color: {
       label: "Knob Main color",
       type: "color",
-      default: "#6b9ac7"
+      default: "#FF0000"
     },
     knob_grad_color: {
       label: "Knob Gradient color",
       type: "color",
-      default: "#2b598b"
+      default: "#FFFFFF"
+    },
+    knob_grad_dir: {
+      label: "Gradient direction",
+      type: "choice",
+      choice: [
+        {
+          label: "None",
+          value: 0
+        },
+        {
+          label: "Horizontal",
+          value: 1
+        },
+        {
+          label: "Vertical",
+          value: 2
+        },
+      ],
+      default: 0
     },
     knob_border_width: {
       label: "Knob Border Width",
       type: "number",
-      default: 2
+      default: 0
     },
     knob_border_color: {
       label: "Knob Border Color",
       type: "color",
-      default: "#152c42"
+      default: "#FFFFFF"
     },
     value: {
       label: "Value",
@@ -213,6 +274,8 @@ addComponent({
       bg.className = "bg";
       $(bg).css({
         position: "absolute",
+        width: "100%",
+        height: "100%"
       });
       group.appendChild(bg);
 
@@ -228,7 +291,7 @@ addComponent({
       knob.className = "knob";
       $(knob).css({
         position: "absolute",
-        top: 0,
+        top: -3 + -4,
         left: 0,
         "border-radius": "100%"
       });
@@ -260,36 +323,85 @@ addComponent({
 
       $(element).find(".bg").css({
         "border-radius": `${this.property.background_radius}px`,
-        background: `linear-gradient(180deg, ${this.property.background_main_color} 0%, ${this.property.background_grad_color} 100%)`,
+        background: +this.property.background_grad_dir === 0 ? this.property.background_main_color : `linear-gradient(${+this.property.background_grad_dir === 1 ? '90' : '180' }deg, ${this.property.background_main_color} 0%, ${this.property.background_grad_color} 100%)`,
         border: `${this.property.background_border_width}px solid ${this.property.background_border_color}`,
         width: `${this.property.width}px`,
-        height: `${this.property.height - (this.property.background_padding * 2)}px`,
-        transform: `translateY(${this.property.background_padding}px)`,
+        height: `${this.property.height}px`,
         padding: `${this.property.indicator_padding}px`,
       });
 
       $(element).find(".indic").css({
         "border-radius": `${this.property.height / 2}px`,
-        background: `linear-gradient(180deg, ${this.property.indicator_main_color} 0%, ${this.property.indicator_grad_color} 100%)`,
+        background: +this.property.indicator_grad_dir === 0 ? this.property.indicator_main_color : `linear-gradient(${+this.property.indicator_grad_dir === 1 ? '90' : '180' }deg, ${this.property.indicator_main_color} 0%, ${this.property.indicator_grad_color} 100%)`,
         "box-shadow": `0 0 0 ${this.property.indicator_border_width}px ${this.property.indicator_border_color}`,
         width: `${(this.property.value / (this.property.range_max - this.property.range_min)) * 100}%`,
       });
 
       $(element).find(".knob").css({
-        width: this.property.height,
-        height: this.property.height,
-        background: `linear-gradient(180deg, ${this.property.knob_main_color} 0%, ${this.property.knob_grad_color} 100%)`,
+        width: this.property.height + 6 + 8,
+        height: this.property.height + 6 + 8,
+        background: +this.property.knob_grad_dir === 0 ? this.property.knob_main_color : `linear-gradient(${+this.property.knob_grad_dir === 1 ? '90' : '180' }deg, ${this.property.knob_main_color} 0%, ${this.property.knob_grad_color} 100%)`,
         border: `${this.property.knob_border_width}px solid ${this.property.knob_border_color}`,
-        left: `${((this.property.value / (this.property.range_max - this.property.range_min)) * this.property.width) - (this.property.height / 2)}px`
+        left: `${((this.property.value / (this.property.range_max - this.property.range_min)) * this.property.width) - (this.property.height / 2) - 3 - 4}px`
       });
 
       updatePos.bind(this)(element);
     },
   },
   build: async function(simulator, pagename, output_path) {
+    let indexGradDir2Var = [ 'LV_GRAD_DIR_NONE', 'LV_GRAD_DIR_HOR', 'LV_GRAD_DIR_VER' ];
+
     let code = "";
     let header = "";
 
+    header += `lv_obj_t* ${this.property.name};\n`;
+    if (this.property.handler.length > 0 && !simulator) {
+      header += `extern void ${this.property.handler}(lv_obj_t*, lv_event_t);\n`;
+    }
+
+    code += `${this.property.name} = lv_slider_create(${!this.property.parent ? 'lv_scr_act()' : this.property.parent}, NULL);\n`;
+    code += "\n";
+
+    code += `lv_obj_set_style_local_bg_color(${this.property.name}, LV_SLIDER_PART_BG, LV_STATE_DEFAULT, lv_color_hex(0x${this.property.background_main_color.substring(1)}));\n`;
+    code += `lv_obj_set_style_local_bg_grad_color(${this.property.name}, LV_SLIDER_PART_BG, LV_STATE_DEFAULT, lv_color_hex(0x${this.property.background_grad_color.substring(1)}));\n`;
+    code += `lv_obj_set_style_local_bg_grad_dir(${this.property.name}, LV_SLIDER_PART_BG, LV_STATE_DEFAULT, ${indexGradDir2Var[+this.property.background_grad_dir]});\n`;
+    code += `lv_obj_set_style_local_radius(${this.property.name}, LV_SLIDER_PART_BG, LV_STATE_DEFAULT, ${this.property.background_radius});\n`;
+    code += `lv_obj_set_style_local_border_color(${this.property.name}, LV_SLIDER_PART_BG, LV_STATE_DEFAULT, lv_color_hex(0x${this.property.background_border_color.substring(1)}));\n`;
+    code += `lv_obj_set_style_local_border_width(${this.property.name}, LV_SLIDER_PART_BG, LV_STATE_DEFAULT, ${this.property.background_border_width});\n`;
+    code += "\n";
+
+    code += `lv_obj_set_style_local_bg_color(${this.property.name}, LV_SLIDER_PART_INDIC, LV_STATE_DEFAULT, lv_color_hex(0x${this.property.indicator_main_color.substring(1)}));\n`;
+    code += `lv_obj_set_style_local_bg_grad_color(${this.property.name}, LV_SLIDER_PART_INDIC, LV_STATE_DEFAULT, lv_color_hex(0x${this.property.indicator_grad_color.substring(1)}));\n`;
+    code += `lv_obj_set_style_local_bg_grad_dir(${this.property.name}, LV_SLIDER_PART_INDIC, LV_STATE_DEFAULT, ${indexGradDir2Var[+this.property.indicator_grad_dir]});\n`;
+    code += `lv_obj_set_style_local_radius(${this.property.name}, LV_SLIDER_PART_INDIC, LV_STATE_DEFAULT, ${this.property.background_radius});\n`;
+    code += `lv_obj_set_style_local_border_color(${this.property.name}, LV_SLIDER_PART_INDIC, LV_STATE_DEFAULT, lv_color_hex(0x${this.property.indicator_border_color.substring(1)}));\n`;
+    code += `lv_obj_set_style_local_border_width(${this.property.name}, LV_SLIDER_PART_INDIC, LV_STATE_DEFAULT, ${this.property.indicator_border_width});\n`;
+    code += "\n";
+
+    code += `lv_obj_set_style_local_bg_color(${this.property.name}, LV_SLIDER_PART_KNOB, LV_STATE_DEFAULT, lv_color_hex(0x${this.property.knob_main_color.substring(1)}));\n`;
+    code += `lv_obj_set_style_local_bg_grad_color(${this.property.name}, LV_SLIDER_PART_KNOB, LV_STATE_DEFAULT, lv_color_hex(0x${this.property.knob_grad_color.substring(1)}));\n`;
+    code += `lv_obj_set_style_local_bg_grad_dir(${this.property.name}, LV_SLIDER_PART_KNOB, LV_STATE_DEFAULT, ${indexGradDir2Var[+this.property.knob_grad_dir]});\n`;
+    code += `lv_obj_set_style_local_radius(${this.property.name}, LV_SLIDER_PART_KNOB, LV_STATE_DEFAULT, LV_RADIUS_CIRCLE);\n`;
+    code += `lv_obj_set_style_local_border_color(${this.property.name}, LV_SLIDER_PART_KNOB, LV_STATE_DEFAULT, lv_color_hex(0x${this.property.knob_border_color.substring(1)}));\n`;
+    code += `lv_obj_set_style_local_border_width(${this.property.name}, LV_SLIDER_PART_KNOB, LV_STATE_DEFAULT, ${this.property.knob_border_width});\n`;
+    code += "\n";
+
+    code += `lv_obj_set_style_local_outline_width(${this.property.name}, LV_SLIDER_PART_BG, LV_STATE_DEFAULT, 0);\n`;
+    code += "\n";
+
+    code += `lv_obj_set_size(${this.property.name}, ${this.property.width}, ${this.property.height});\n`;
+    code += `lv_obj_align(${this.property.name}, NULL, ${propertyToAlign(this.property)}, ${this.property.x}, ${this.property.y});\n`;
+    code += `${this.property.handler.length > 0 && !simulator ? '' : '// '}lv_obj_set_event_cb(${this.property.name}, ${this.property.handler});\n`;
+    code += "\n";
+
+    code += `lv_slider_set_range(${this.property.name}, ${this.property.range_min}, ${this.property.range_max});\n`;
+    code += `lv_slider_set_value(${this.property.name}, ${this.property.value}, LV_ANIM_OFF);\n`;
+    code += `\n`;
+
+    code += `lv_obj_set_hidden(${this.property.name}, ${this.property.hidden === 0 ? 'true' : 'false'});`;
+    code += `\n`;
+
+/*
     // Style
     header += `static lv_style_t ${this.property.name}_bg_style;\n`;
     header += `static lv_style_t ${this.property.name}_indic_style;\n`;
@@ -348,7 +460,7 @@ addComponent({
 
     code += `lv_obj_set_hidden(${this.property.name}, ${this.property.hidden === 0 ? 'true' : 'false'});`;
     code += `\n`;
-
+*/
     if (this.property.define == 0) { // define local
       code = `${header}\n${code}`;
       header = "";

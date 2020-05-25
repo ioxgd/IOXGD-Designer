@@ -233,19 +233,12 @@ addComponent({
     let code = "";
     let header = "";
 
-    // Style
-    header += `static lv_style_t ${this.property.name}_style;\n`;
-
-    code += `lv_style_copy(&${this.property.name}_style, &lv_style_plain);\n`;
-    code += `${this.property.name}_style.text.color = lv_color_hex(0x${this.property.color.substring(1)});\n`;
-    code += `${this.property.name}_style.text.font = &${typeof font.variable !== "undefined" ? font.variable : font.name};\n`;
-    code += `\n`;
-
     // Label object
     header += `lv_obj_t* ${this.property.name};\n`;
 
     code += `${this.property.name} = lv_label_create(${!this.property.parent ? 'lv_scr_act()' : this.property.parent}, NULL);\n`;
-    code += `lv_label_set_style(${this.property.name}, LV_LABEL_STYLE_MAIN, &${this.property.name}_style);\n`;
+    code += `lv_obj_set_style_local_text_color(${this.property.name}, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, lv_color_hex(0x${this.property.color.substring(1)}));\n`;
+    code += `lv_obj_set_style_local_text_font(${this.property.name}, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, &${typeof font.variable !== "undefined" ? font.variable : font.name});\n`;
     code += `lv_label_set_long_mode(${this.property.name}, ${long_mode_list[this.property.mode]});\n`;
     code += `lv_label_set_align(${this.property.name}, ${text_align_list[this.property.text_align]});\n`;
     code += `lv_label_set_text(${this.property.name}, "${this.property.text}");\n`;

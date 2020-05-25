@@ -128,14 +128,14 @@ addComponent({
     rel_main_color: {
       label: "Release Main color",
       type: "color",
-      default: "#76A2D0"
+      default: "#FFFFFF"
     },
     rel_grad_color: {
       label: "Release Gradient color",
       type: "color",
-      default: "#193A5D"
+      default: "#FFFFFF"
     },
-    pr_grad_dir: {
+    rel_grad_dir: {
       label: "Release Gradient direction",
       type: "choice",
       choice: [
@@ -157,12 +157,12 @@ addComponent({
     pr_main_color: {
       label: "Press Main color",
       type: "color",
-      default: "#336294"
+      default: "#FF0000"
     },
     pr_grad_color: {
       label: "Press Gradient color",
       type: "color",
-      default: "#10263C"
+      default: "#FFFFFF"
     },
     pr_grad_dir: {
       label: "Press Gradient direction",
@@ -191,17 +191,17 @@ addComponent({
     border_color: {
       label: "Border Color",
       type: "color",
-      default: "#0B1928"
+      default: "#FF0000"
     },
     radius: {
       label: "Corner radius",
       type: "number",
-      default: 6
+      default: 25
     },
     color: {
       label: "Text Color",
       type: "color",
-      default: "#FFFFFF"
+      default: "#31404F"
     },
     font: {
       label: "Font",
@@ -254,7 +254,7 @@ addComponent({
         width: this.property.width,
         height: this.property.height,
         color: this.property.color,
-        background: `linear-gradient(180deg, ${this.property.rel_main_color} 0%, ${this.property.rel_grad_color} 100%)`,
+        background: +this.property.rel_grad_dir === 0 ? this.property.rel_main_color : `linear-gradient(${+this.property.rel_grad_dir === 1 ? '90' : '180' }deg, ${this.property.rel_main_color} 0%, ${this.property.rel_grad_color} 100%)`,
         border: `${this.property.border_width}px solid ${this.property.border_color}`,
         "border-radius": `${this.property.radius}px`,
         "font-family": font.name,
@@ -267,9 +267,59 @@ addComponent({
   },
   build: async function(simulator, pagename, output_path) {
     let font = getFontFromName(this.property.font);
+    let indexGradDir2Var = [ 'LV_GRAD_DIR_NONE', 'LV_GRAD_DIR_HOR', 'LV_GRAD_DIR_VER' ];
 
     let code = "";
     let header = "";
+
+    // Button object
+    header += `lv_obj_t* ${this.property.name};\n`;
+    if (this.property.handler.length > 0 && !simulator) {
+      header += `extern void ${this.property.handler}(lv_obj_t*, lv_event_t);\n`;
+    }
+
+    code += `${this.property.name} = lv_btn_create(${!this.property.parent ? 'lv_scr_act()' : this.property.parent}, NULL);\n`;
+    code += `${this.property.handler.length > 0 && !simulator ? '' : '// '}lv_obj_set_event_cb(${this.property.name}, ${this.property.handler});\n`;
+    code += `lv_obj_set_size(${this.property.name}, ${this.property.width}, ${this.property.height});\n`;
+    code += `lv_obj_align(${this.property.name}, NULL, ${propertyToAlign(this.property)}, ${this.property.x}, ${this.property.y});\n`;
+    code += `lv_btn_set_checkable(${this.property.name}, ${+this.property.toggle === 1 ? 'true' : 'false'});\n`;
+    code += `\n`;
+    code += `lv_obj_set_style_local_bg_color(${this.property.name}, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, lv_color_hex(0x${this.property.rel_main_color.substring(1)}));\n`;
+    code += `lv_obj_set_style_local_bg_grad_color(${this.property.name}, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, lv_color_hex(0x${this.property.rel_grad_color.substring(1)}));\n`;
+    code += `lv_obj_set_style_local_bg_grad_dir(${this.property.name}, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, ${indexGradDir2Var[+this.property.rel_grad_dir]});\n`;
+    code += `lv_obj_set_style_local_border_color(${this.property.name}, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, lv_color_hex(0x${this.property.border_color.substring(1)}));\n`;
+    code += `lv_obj_set_style_local_border_width(${this.property.name}, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, ${this.property.border_width});\n`;
+   
+    code += `lv_obj_set_style_local_bg_color(${this.property.name}, LV_BTN_PART_MAIN, LV_STATE_PRESSED, lv_color_hex(0x${this.property.pr_main_color.substring(1)}));\n`;
+    code += `lv_obj_set_style_local_bg_grad_color(${this.property.name}, LV_BTN_PART_MAIN, LV_STATE_PRESSED, lv_color_hex(0x${this.property.pr_grad_color.substring(1)}));\n`;
+    code += `lv_obj_set_style_local_bg_grad_dir(${this.property.name}, LV_BTN_PART_MAIN, LV_STATE_PRESSED, ${indexGradDir2Var[+this.property.pr_grad_dir]});\n`;
+    code += `lv_obj_set_style_local_border_color(${this.property.name}, LV_BTN_PART_MAIN, LV_STATE_PRESSED, lv_color_hex(0x${this.property.border_color.substring(1)}));\n`;
+    code += `lv_obj_set_style_local_border_width(${this.property.name}, LV_BTN_PART_MAIN, LV_STATE_PRESSED, ${this.property.border_width});\n`;
+
+    code += `lv_obj_set_style_local_radius(${this.property.name}, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, ${this.property.radius});\n`;
+
+    code += `lv_obj_set_style_local_transition_time(${this.property.name}, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, 0);\n`;
+    code += `lv_obj_set_style_local_transition_delay(${this.property.name}, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, 0);\n`;
+
+    code += `lv_obj_set_style_local_outline_width(${this.property.name}, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, 0);\n`;
+
+    code += `\n`;
+    // Label
+    header += `lv_obj_t* ${this.property.name}_label;\n`;
+  
+    code += `${this.property.name}_label = lv_label_create(${this.property.name}, NULL);\n`;
+    code += `lv_obj_set_style_local_text_color(${this.property.name}_label, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, lv_color_hex(0x${this.property.color.substring(1)}));\n`;
+    code += `lv_obj_set_style_local_text_font(${this.property.name}_label, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, &${typeof font.variable !== "undefined" ? font.variable : font.name});\n`;
+    code += `lv_label_set_text(${this.property.name}_label, "${this.property.text}");\n`;
+    code += `\n`;
+
+    code += `lv_obj_set_hidden(${this.property.name}, ${this.property.hidden === 0 ? 'true' : 'false'});`;
+    code += `\n`;
+    
+    /*
+    // Button REL Style
+
+
 
     // Button REL Style
     header += `static lv_style_t ${this.property.name}_rel_style;\n`;
@@ -324,7 +374,7 @@ addComponent({
 
     code += `lv_obj_set_hidden(${this.property.name}, ${this.property.hidden === 0 ? 'true' : 'false'});`;
     code += `\n`;
-
+*/
     if (this.property.define == 0) { // define local
       code = `${header}\n${code}`;
       header = "";

@@ -112,17 +112,36 @@ addComponent({
     main_color: {
       label: "Main color",
       type: "color",
-      default: "#B00F48"
+      default: "#FF0000"
     },
     grad_color: {
       label: "Gradient color",
       type: "color",
-      default: "#500702"
+      default: "#FFFFFF"
+    },
+    grad_dir: {
+      label: "Gradient direction",
+      type: "choice",
+      choice: [
+        {
+          label: "None",
+          value: 0
+        },
+        {
+          label: "Horizontal",
+          value: 1
+        },
+        {
+          label: "Vertical",
+          value: 2
+        },
+      ],
+      default: 0
     },
     border_width: {
       label: "Border Width",
       type: "number",
-      default: 3
+      default: 2
     },
     border_color: {
       label: "Border Color",
@@ -134,17 +153,17 @@ addComponent({
       type: "number",
       min: 0,
       max: 255,
-      default: 255
+      default: 50
     },
     shadow_color: {
       label: "Shadow Color",
       type: "color",
-      default: "#B00F48"
+      default: "#FF0000"
     },
     shadow_width: {
       label: "Shadow Width",
       type: "number",
-      default: 2
+      default: 15
     },
     bright: {
       label: "Brightness",
@@ -176,7 +195,7 @@ addComponent({
       $(element).css({
         width: this.property.width,
         height: this.property.height,
-        background: `linear-gradient(180deg, ${this.property.main_color} 0%, ${this.property.grad_color} 100%)`,
+        background: +this.property.grad_dir === 0 ? this.property.main_color : `linear-gradient(${+this.property.grad_dir === 1 ? '90' : '180' }deg, ${this.property.main_color} 0%, ${this.property.grad_color} 100%)`,
         border: `${this.property.border_width}px solid ${hexToRgbA(this.property.border_color, this.property.border_opacity / 255)}`,
         "border-radius": `100%`,
         "box-shadow": `0 0 ${this.property.shadow_width}px ${this.property.shadow_color}`,
@@ -187,30 +206,28 @@ addComponent({
     },
   },
   build: async function(simulator, pagename, output_path) {
+    let indexGradDir2Var = [ 'LV_GRAD_DIR_NONE', 'LV_GRAD_DIR_HOR', 'LV_GRAD_DIR_VER' ];
+
     let code = "";
     let header = "";
-
-    console.log(this);
-
-    // Style
-    header += `static lv_style_t ${this.property.name}_style;\n`;
-
-    code += `lv_style_copy(&${this.property.name}_style, &lv_style_plain);\n`;
-    code += `${this.property.name}_style.body.main_color = lv_color_hex(0x${this.property.main_color.substring(1)});\n`;
-    code += `${this.property.name}_style.body.grad_color = lv_color_hex(0x${this.property.grad_color.substring(1)});\n`;
-    code += `${this.property.name}_style.body.radius = LV_RADIUS_CIRCLE;\n`;
-    code += `${this.property.name}_style.body.border.color = lv_color_hex(0x${this.property.border_color.substring(1)});\n`;
-    code += `${this.property.name}_style.body.border.width = ${this.property.border_width};\n`;
-    code += `${this.property.name}_style.body.border.opa = ${this.property.border_opacity};\n`;
-    code += `${this.property.name}_style.body.shadow.color = lv_color_hex(0x${this.property.shadow_color.substring(1)});\n`;
-    code += `${this.property.name}_style.body.shadow.width = ${this.property.shadow_width};\n`;
-    code += `\n`;
 
     // LED object
     header += `lv_obj_t* ${this.property.name};\n`;
 
     code += `${this.property.name} = lv_led_create(${!this.property.parent ? 'lv_scr_act()' : this.property.parent}, NULL);\n`;
-    code += `lv_obj_set_style(${this.property.name}, &${this.property.name}_style);\n`;
+    code += `\n`;
+
+    code += `lv_obj_set_style_local_bg_color(${this.property.name}, LV_LED_PART_MAIN, LV_STATE_DEFAULT, lv_color_hex(0x${this.property.main_color.substring(1)}));\n`;
+    code += `lv_obj_set_style_local_bg_grad_color(${this.property.name}, LV_LED_PART_MAIN, LV_STATE_DEFAULT, lv_color_hex(0x${this.property.grad_color.substring(1)}));\n`;
+    code += `lv_obj_set_style_local_bg_grad_dir(${this.property.name}, LV_LED_PART_MAIN, LV_STATE_DEFAULT, ${indexGradDir2Var[+this.property.grad_dir]});\n`;
+    code += `lv_obj_set_style_local_radius(${this.property.name}, LV_LED_PART_MAIN, LV_STATE_DEFAULT, LV_RADIUS_CIRCLE);\n`;
+    code += `lv_obj_set_style_local_border_color(${this.property.name}, LV_LED_PART_MAIN, LV_STATE_DEFAULT, lv_color_hex(0x${this.property.border_color.substring(1)}));\n`;
+    code += `lv_obj_set_style_local_border_width(${this.property.name}, LV_LED_PART_MAIN, LV_STATE_DEFAULT, ${this.property.border_width});\n`;
+    code += `lv_obj_set_style_local_border_opa(${this.property.name}, LV_LED_PART_MAIN, LV_STATE_DEFAULT, ${this.property.border_opacity});\n`;
+    code += `lv_obj_set_style_local_shadow_color(${this.property.name}, LV_LED_PART_MAIN, LV_STATE_DEFAULT, lv_color_hex(0x${this.property.shadow_color.substring(1)}));\n`;
+    code += `lv_obj_set_style_local_shadow_width(${this.property.name}, LV_LED_PART_MAIN, LV_STATE_DEFAULT, ${this.property.shadow_width});\n`;
+    code += `\n`;
+
     code += `lv_obj_set_size(${this.property.name}, ${this.property.width}, ${this.property.height});\n`;
     code += `lv_obj_align(${this.property.name}, NULL, ${propertyToAlign(this.property)}, ${this.property.x}, ${this.property.y});\n`;
     code += `lv_led_set_bright(${this.property.name}, ${this.property.bright});\n`;

@@ -1,11 +1,11 @@
 let listFont = [];
 
 listFont.push({
-    name: "Roboto_16",
+    name: "Montserrat_16",
     size: 16,
     range: "0x0020-0x007F",
-    variable: "lv_font_roboto_16",
-    file: "font/Roboto-Regular.ttf"
+    variable: "lv_font_montserrat_16",
+    file: "font/Montserrat-Regular.ttf"
 });
 
 function previewShow(fontPath, size, text) {

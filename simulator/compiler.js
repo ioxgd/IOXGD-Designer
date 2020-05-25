@@ -50,7 +50,9 @@ let clean = () => {
   }
   
   try {
-    fs.unlinkSync(outputFile);
+    if (fs.existsSync(outputFile)) {
+      fs.unlinkSync(outputFile);
+    }
   } catch (msg) {
     console.log(msg);
   }

@@ -114,6 +114,11 @@ addComponent({
       ],
       default: 0
     },
+    angle: {
+      label: "Rotation Angle",
+      type: "number",
+      default: 0,
+    },
   },
   render: {
     create: function(id) {
@@ -138,6 +143,7 @@ addComponent({
     update: function(element) {
       $(element).css({ 
         position: 'absolute',
+        transform: `rotate(${this.property.angle}deg)`
       });
       $(element).attr("src", this.property.src)
 
@@ -167,6 +173,7 @@ addComponent({
     } else if (this.property.storage == 1) { // MicroSD Card
       code += `lv_img_set_src(${objName}, "S:/path/to/${path.basename(this.property.src)}"); // TODO\n`;
     }
+    code += `lv_img_set_angle(${objName}, ${this.property.angle * 10});\n`;
     code += `lv_obj_align(${objName}, NULL, ${propertyToAlign(this.property)}, ${this.property.x}, ${this.property.y});\n`;
     code += `\n`;
 
